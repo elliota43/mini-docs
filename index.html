@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>mini PHP Framework • Documentation</title>
+    <title>Bare Metal PHP • Documentation</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
 
     <style>
@@ -358,8 +358,8 @@
         <div class="brand">
             <div class="brand-logo"></div>
             <div class="brand-text">
-                <span>PHP MICRO</span>
-                <span>mini framework</span>
+                <span>PHP FRAMEWORK</span>
+                <span>Bare Metal PHP</span>
             </div>
         </div>
 
@@ -367,6 +367,7 @@
             <div class="sidebar-section-title">Overview</div>
             <ul class="nav-list">
                 <li><a class="nav-link active" data-target="intro"><span class="bullet"></span>Introduction</a></li>
+                <li><a class="nav-link" data-target="installation"><span class="bullet"></span>Installation</a></li>
                 <li><a class="nav-link" data-target="getting-started"><span class="bullet"></span>Getting Started</a></li>
                 <li><a class="nav-link" data-target="structure"><span class="bullet"></span>Directory Structure</a></li>
             </ul>
@@ -393,10 +394,21 @@
         </div>
 
         <div>
+            <div class="sidebar-section-title">Features</div>
+            <ul class="nav-list">
+                <li><a class="nav-link" data-target="auth"><span class="bullet"></span>Authentication</a></li>
+                <li><a class="nav-link" data-target="sessions"><span class="bullet"></span>Sessions</a></li>
+                <li><a class="nav-link" data-target="logging"><span class="bullet"></span>Logging</a></li>
+                <li><a class="nav-link" data-target="frontend"><span class="bullet"></span>Frontend Integration</a></li>
+                <li><a class="nav-link" data-target="helpers"><span class="bullet"></span>Helper Functions</a></li>
+            </ul>
+        </div>
+
+        <div>
             <div class="sidebar-section-title">Developer Experience</div>
             <ul class="nav-list">
                 <li><a class="nav-link" data-target="errors"><span class="bullet"></span>Error Pages &amp; Debug</a></li>
-                <li><a class="nav-link" data-target="roadmap"><span class="bullet"></span>Next Steps</a></li>
+                <li><a class="nav-link" data-target="testing"><span class="bullet"></span>Testing</a></li>
             </ul>
         </div>
 
@@ -409,11 +421,11 @@
     <main class="content">
         <!-- INTRO -->
         <section class="doc-section" id="intro">
-            <div class="pill"><span class="dot"></span> mini PHP framework</div>
+            <div class="pill"><span class="dot"></span> Bare Metal PHP Framework</div>
             <h1>Introduction</h1>
             <p>
-                <strong>mini</strong> is a small, Laravel-inspired PHP framework built to learn how modern frameworks
-                actually work under the hood: a service container, HTTP kernel with middleware pipeline, routing and
+                <strong>Bare Metal PHP</strong> is a lightweight, educational PHP framework built to learn how modern frameworks
+                actually work under the hood. It provides a service container, HTTP kernel with middleware pipeline, routing and
                 controller resolution via reflection, a simple ActiveRecord ORM, query builder, and a tiny Blade-style
                 templating engine.
             </p>
@@ -427,45 +439,131 @@
                     <h3>Philosophy</h3>
                     <ul>
                         <li>Small, readable code over magical behavior.</li>
-                        <li>Feature set mirrors “early Eloquent / early Laravel”.</li>
+                        <li>Feature set mirrors "early Eloquent / early Laravel".</li>
                         <li>Every subsystem is something you can open and modify.</li>
+                        <li>Built with PHP 8.2+ features and modern best practices.</li>
                     </ul>
                 </div>
                 <div class="card">
-                    <h3>Major Pieces</h3>
+                    <h3>Core Features</h3>
                     <ul>
                         <li>Service container with dependency injection &amp; service providers.</li>
-                        <li>Router with parameter binding &amp; implicit route model binding.</li>
+                        <li>Router with parameter binding, named routes &amp; implicit route model binding.</li>
                         <li>View engine with <code>{{ }}</code>, <code>@if</code>, <code>@foreach</code> syntax.</li>
                         <li>Models, relationships, query builder &amp; collections.</li>
-                        <li>SQLite migrations via a small console tool (<code>php mini ...</code>).</li>
+                        <li>Database migrations via CLI (<code>php mini ...</code>).</li>
                         <li>Dark-mode debug error page with stack trace &amp; request context.</li>
+                        <li>Authentication, sessions, logging &amp; helper functions.</li>
+                        <li>Frontend integration (React/Vue with Vite).</li>
                     </ul>
                 </div>
             </div>
+        </section>
+
+        <!-- INSTALLATION -->
+        <section class="doc-section" id="installation">
+            <h2>Installation</h2>
+            <p>
+                Bare Metal PHP requires <strong>PHP 8.2+</strong> with the PDO extension. You can use SQLite (default), MySQL, or PostgreSQL.
+            </p>
+
+            <h3>Creating a New Project</h3>
+            <p>
+                The easiest way to get started is to use Composer to create a new project:
+            </p>
+
+            <div class="code-block"><pre>composer create-project baremetalphp/baremetalphp my-app</pre></div>
+
+            <p>
+                This will create a new directory called <code>my-app</code> with a fresh Bare Metal PHP installation.
+            </p>
+
+            <h3>Quick Setup</h3>
+            <p>After creating your project, follow these steps:</p>
+
+            <div class="code-block"><pre># 1. Navigate to your project
+cd my-app
+
+# 2. Install dependencies (if not done automatically)
+composer install
+
+# 3. Create environment file
+cp .env.example .env
+
+# 4. Create SQLite database (or configure MySQL/PostgreSQL in .env)
+touch database.sqlite
+
+# 5. Run migrations
+php mini migrate
+
+# 6. Start development server
+php mini serve</pre></div>
+
+            <p>
+                Visit <code>http://127.0.0.1:9003</code> in your browser to see the welcome page!
+            </p>
+
+            <h3>Environment Configuration</h3>
+            <p>
+                Edit the <code>.env</code> file to configure your application:
+            </p>
+
+            <div class="code-block"><pre>APP_NAME="My App"
+APP_DEBUG=true
+APP_URL=http://localhost:9003
+
+# Database (SQLite is default)
+DB_CONNECTION=sqlite
+DB_DATABASE=database.sqlite
+
+# For MySQL
+# DB_CONNECTION=mysql
+# DB_HOST=127.0.0.1
+# DB_PORT=3306
+# DB_DATABASE=myapp
+# DB_USERNAME=root
+# DB_PASSWORD=secret
+
+# For PostgreSQL
+# DB_CONNECTION=pgsql
+# DB_HOST=127.0.0.1
+# DB_PORT=5432
+# DB_DATABASE=myapp
+# DB_USERNAME=postgres
+# DB_PASSWORD=secret</pre></div>
         </section>
 
         <!-- GETTING STARTED -->
         <section class="doc-section" id="getting-started">
             <h2>Getting Started</h2>
             <p>
-                mini assumes a basic PHP 8+ environment with SQLite available. From your project root:
-            </p>
-
-            <div class="code-block"><pre>$ php mini serve
-PHP built-in server started at http://127.0.0.1:9003</pre></div>
-
-            <p>
-                The front controller <code>public/index.php</code> boots the application:
+                Bare Metal PHP applications start from <code>public/index.php</code>, which boots the application:
             </p>
 
             <div class="code-block"><pre>// public/index.php
 
-require __DIR__.'/../vendor/autoload.php';     // optional
-$app = require __DIR__.'/../bootstrap/app.php';
+&lt;?php
 
-$kernel  = $app->make(\Framework\Http\Kernel::class);
-$request = \Framework\Http\Request::capture();
+declare(strict_types=1);
+
+use BareMetalPHP\Exceptions\ErrorPageRenderer;
+use BareMetalPHP\Http\Request;
+use BareMetalPHP\Http\Kernel;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+// Start session
+\BareMetalPHP\Support\Session::start();
+
+$app = require __DIR__ . '/../bootstrap/app.php';
+
+// Build Request from PHP Globals
+$request = Request::fromGlobals();
+
+$app->instance(Request::class, $request);
+
+/** @var Kernel $kernel */
+$kernel = $app->make(Kernel::class);
 
 $response = $kernel->handle($request);
 $response->send();</pre></div>
@@ -476,12 +574,16 @@ $response->send();</pre></div>
 
             <div class="code-block"><pre>// routes/web.php
 
-use Framework\Routing\Router;
-use Framework\View\View;
+use BareMetalPHP\Routing\Router;
+use BareMetalPHP\View\View;
 
 return function (Router $router): void {
     $router->get('/', function () {
-        return View::make('home', ['name' =&gt; 'Elliot Anderson']);
+        return View::make('home', ['name' =&gt; 'World']);
+    });
+    
+    $router->get('/hello/{name}', function (string $name) {
+        return new Response("Hello, {$name}!");
     });
 };</pre></div>
         </section>
@@ -489,7 +591,7 @@ return function (Router $router): void {
         <!-- STRUCTURE -->
         <section class="doc-section" id="structure">
             <h2>Directory Structure</h2>
-            <p>A typical application using mini looks like:</p>
+            <p>A typical Bare Metal PHP application looks like:</p>
 
             <div class="code-block"><pre>.
 ├── app
@@ -502,31 +604,30 @@ return function (Router $router): void {
 ├── bootstrap
 │   ├── app.php
 │   └── providers.php
+├── config
+│   └── database.php
+├── database
+│   ├── migrations
+│   └── database.sqlite
 ├── public
 │   ├── index.php
 │   └── debug/              # saved debug html snapshots
 ├── resources
-│   └── views               # Blade-ish templates
+│   ├── views               # Blade-ish templates
+│   └── js                  # Frontend assets (if using React/Vue)
 ├── routes
 │   └── web.php
-├── src
-│   ├── Application.php     # container
-│   ├── Console             # mini CLI: serve, migrate, ...
-│   ├── Database            # Connection, Model, Builder, Migration
-│   ├── Exceptions          # ErrorPageRenderer
-│   ├── Http                # Request, Response, Kernel
-│   ├── Routing             # Router
-│   ├── Support             # Collection
-│   └── View                # View, TemplateEngine
-└── storage
-    └── views               # compiled templates</pre></div>
+├── storage
+│   ├── views               # compiled templates
+│   └── logs                # log files
+└── vendor/                 # Composer dependencies</pre></div>
         </section>
 
         <!-- CONTAINER -->
         <section class="doc-section" id="container">
             <h2>Service Container &amp; Bootstrapping</h2>
             <p>
-                The <code>Framework\Application</code> class is a lightweight IoC container. It is responsible for:
+                The <code>BareMetalPHP\Application</code> class is a lightweight IoC container. It is responsible for:
             </p>
             <ul>
                 <li>Registering bindings and singletons.</li>
@@ -535,13 +636,16 @@ return function (Router $router): void {
                 <li>Managing service provider registration and booting.</li>
             </ul>
 
-            <div class="code-block"><pre>// bootstrap/app.php (using service providers)
+            <div class="code-block"><pre>// bootstrap/app.php
 
-use Framework\Application;
+use BareMetalPHP\Application;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$app = new Application();
+$app = new Application(__DIR__ . '/..');
+
+// Set instance for global access
+Application::setInstance($app);
 
 // Register service providers
 $providersFile = __DIR__ . '/providers.php';
@@ -569,14 +673,14 @@ return $app;</pre></div>
 
             <h3>Creating a Service Provider</h3>
             <p>
-                All service providers extend the <code>Framework\Support\ServiceProvider</code> base class:
+                All service providers extend the <code>BareMetalPHP\Support\ServiceProvider</code> base class:
             </p>
 
             <div class="code-block"><pre>// app/Providers/AppServiceProvider.php
 
 namespace App\Providers;
 
-use Framework\Support\ServiceProvider;
+use BareMetalPHP\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -603,10 +707,15 @@ class AppServiceProvider extends ServiceProvider
 
 return [
     // Framework core providers
-    \Framework\Providers\DatabaseServiceProvider::class,
-    \Framework\Providers\ViewServiceProvider::class,
-    \Framework\Providers\RoutingServiceProvider::class,
-    \Framework\Providers\HttpServiceProvider::class,
+    \BareMetalPHP\Providers\ConfigServiceProvider::class,
+    \BareMetalPHP\Providers\DatabaseServiceProvider::class,
+    \BareMetalPHP\Providers\ViewServiceProvider::class,
+    \BareMetalPHP\Providers\RoutingServiceProvider::class,
+    \BareMetalPHP\Providers\HttpServiceProvider::class,
+    \BareMetalPHP\Providers\LoggingServiceProvider::class,
+    
+    // Optional: Frontend integration (React/Vue with Vite)
+    // \BareMetalPHP\Providers\FrontendServiceProvider::class,
     
     // Application providers
     \App\Providers\AppServiceProvider::class,
@@ -615,12 +724,13 @@ return [
             <h3>Built-in Service Providers</h3>
             <p>The framework includes several service providers:</p>
             <ul>
-                <li><strong>DatabaseServiceProvider</strong> – Registers database connection and model setup</li>
+                <li><strong>ConfigServiceProvider</strong> – Loads configuration files from <code>config/</code></li>
+                <li><strong>DatabaseServiceProvider</strong> – Registers database connections (SQLite, MySQL, PostgreSQL) and model setup</li>
                 <li><strong>ViewServiceProvider</strong> – Configures view paths and caching</li>
                 <li><strong>RoutingServiceProvider</strong> – Registers router and loads route files</li>
                 <li><strong>HttpServiceProvider</strong> – Registers HTTP kernel</li>
-                <li><strong>ConfigServiceProvider</strong> – Loads configuration files (available)</li>
-                <li><strong>LoggingServiceProvider</strong> – Sets up logging system (available)</li>
+                <li><strong>LoggingServiceProvider</strong> – Sets up logging system</li>
+                <li><strong>FrontendServiceProvider</strong> – Optional provider for React/Vue integration with Vite</li>
             </ul>
 
             <div class="card">
@@ -638,9 +748,9 @@ return [
                 The HTTP layer consists of:
             </p>
             <ul>
-                <li><code>Framework\Http\Request</code> – an immutable request object.</li>
-                <li><code>Framework\Http\Response</code> – simple response wrapper.</li>
-                <li><code>Framework\Http\Kernel</code> – builds a middleware pipeline and delegates to the router.</li>
+                <li><code>BareMetalPHP\Http\Request</code> – an immutable request object.</li>
+                <li><code>BareMetalPHP\Http\Response</code> – simple response wrapper.</li>
+                <li><code>BareMetalPHP\Http\Kernel</code> – builds a middleware pipeline and delegates to the router.</li>
             </ul>
 
             <div class="code-block"><pre>// Kernel::handle()
@@ -648,14 +758,19 @@ return [
 public function handle(Request $request): Response
 {
     try {
-        $pipeline = $this-&gt;buildMiddlewarePipeline();
+        $pipeline = array_reduce(
+            array_reverse($this-&gt;middleware),
+            function (callable $next, string $middlewareClass) {
+                return function (Request $request) use ($next, $middlewareClass): Response {
+                    $middleware = $this-&gt;app-&gt;make($middlewareClass);
+                    return $middleware-&gt;handle($request, $next);
+                };
+            },
+            fn (Request $request): Response =&gt; $this-&gt;router-&gt;dispatch($request)
+        );
         return $pipeline($request);
     } catch (\Throwable $e) {
-        if (getenv('APP_DEBUG') === 'true') {
-            $html = ErrorPageRenderer::render($e, $request, $this-&gt;app);
-            return new Response($html, 500);
-        }
-        return new Response('Internal Server Error', 500);
+        // Handle exceptions with error pages or API responses
     }
 }</pre></div>
 
@@ -663,24 +778,29 @@ public function handle(Request $request): Response
                 Middleware are simple classes with a <code>handle(Request $request, Closure $next)</code> method.
             </p>
 
-            <div class="code-block"><pre>// app/Http/Middleware/LogRequests.php
+            <div class="code-block"><pre>// app/Http/Middleware/CustomMiddleware.php
 
-class LogRequests
+namespace App\Http\Middleware;
+
+use BareMetalPHP\Http\Request;
+use BareMetalPHP\Http\Response;
+use Closure;
+
+class CustomMiddleware
 {
-    public function handle(Request $request, \Closure $next): Response
+    public function handle(Request $request, Closure $next): Response
     {
+        // Before the request is handled
         $response = $next($request);
 
-        error_log(sprintf(
-            '%s %s -&gt; %d',
-            $request-&gt;getMethod(),
-            $request-&gt;getPath(),
-            $response-&gt;getStatusCode()
-        ));
-
+        // After the request is handled
         return $response;
     }
 }</pre></div>
+
+            <p>
+                Middleware can be registered globally in <code>BareMetalPHP\Http\Kernel::$middleware</code> or applied to specific routes.
+            </p>
         </section>
 
         <!-- ROUTING -->
@@ -698,26 +818,36 @@ return function (Router $router): void {
     $router-&gt;get('/hello/{name}', function (string $name) {
         return new Response("Hello, {$name}");
     });
+    
+    $router-&gt;post('/users', [UserController::class, 'store']);
 };</pre></div>
 
+            <h3>Named Routes</h3>
+            <p>Routes can be given names for easy URL generation:</p>
+
+            <div class="code-block"><pre>$router-&gt;get('/users/{id}', [UserController::class, 'show'])-&gt;name('users.show');
+
+// Generate URL using the route helper
+$url = route('users.show', ['id' =&gt; 1]);
+// Returns: /users/1</pre></div>
+
             <h3>Controller Actions</h3>
-            <p>Routes can point to controllers using <code>&quot;Controller@method&quot;</code> or array syntax:</p>
+            <p>Routes can point to controllers using array syntax:</p>
 
-            <div class="code-block"><pre>$router-&gt;get('/dashboard', 'HomeController@index');
+            <div class="code-block"><pre>$router-&gt;get('/dashboard', [HomeController::class, 'index']);
 
-// or
+// In HomeController
+namespace App\Http\Controllers;
 
-$router-&gt;get('/dashboard', [\App\Http\Controllers\HomeController::class, 'index']);</pre></div>
+use BareMetalPHP\Http\Request;
+use BareMetalPHP\Http\Response;
 
-            <p>
-                The router uses reflection to resolve the controller from the container and inject method dependencies:
-            </p>
-
-            <div class="code-block"><pre>class HomeController
+class HomeController
 {
-    public function index(\Framework\Http\Request $request): Response
+    public function index(Request $request): Response
     {
-        // Request is injected automatically
+        // Request is injected automatically via reflection
+        return View::make('dashboard');
     }
 }</pre></div>
 
@@ -727,7 +857,7 @@ $router-&gt;get('/dashboard', [\App\Http\Controllers\HomeController::class, 'ind
                 both as raw values and for <strong>implicit route model binding</strong>.
             </p>
 
-            <div class="code-block"><pre>$router-&gt;get('/users/{user}', 'UserController@show');
+            <div class="code-block"><pre>$router-&gt;get('/users/{user}', [UserController::class, 'show']);
 
 // In UserController
 
@@ -739,8 +869,8 @@ public function show(\App\Models\User $user): Response
 }</pre></div>
 
             <p>
-                Under the hood, <code>callWithDependencies()</code> checks if a parameter type is a subclass of
-                <code>Framework\Database\Model</code> and the parameter name matches a route parameter; if so, it calls
+                Under the hood, the router uses reflection to check if a parameter type is a subclass of
+                <code>BareMetalPHP\Database\Model</code> and the parameter name matches a route parameter; if so, it calls
                 <code>User::find($id)</code> and injects the model.
             </p>
         </section>
@@ -750,19 +880,14 @@ public function show(\App\Models\User $user): Response
             <h2>Views &amp; Templating</h2>
             <p>
                 Views live in <code>resources/views</code> and are compiled to PHP into <code>storage/views</code> by
-                <code>Framework\View\TemplateEngine</code>. The <code>View</code> facade compiles and returns a
+                <code>BareMetalPHP\View\TemplateEngine</code>. The <code>View</code> class compiles and returns a
                 <code>Response</code>.
             </p>
-
-            <div class="code-block"><pre>// bootstrap/app.php
-
-View::setBasePath(__DIR__ . '/../resources/views');
-View::setCachePath(__DIR__ . '/../storage/views');</pre></div>
 
             <h3>Template Syntax</h3>
             <ul>
                 <li><code>{{ $var }}</code> – escaped echo (<code>htmlspecialchars</code>).</li>
-                <li><code>{!! $html !!}</code> – raw echo.</li>
+                <li><code>{!! $html !!}</code> – raw echo (use with caution!).</li>
                 <li><code>@if</code>, <code>@elseif</code>, <code>@else</code>, <code>@endif</code>.</li>
                 <li><code>@foreach</code>, <code>@endforeach</code>.</li>
             </ul>
@@ -772,8 +897,8 @@ View::setCachePath(__DIR__ . '/../storage/views');</pre></div>
 &lt;!doctype html&gt;
 &lt;html&gt;
 &lt;head&gt;
-    &lt;meta charset=&quot;UTF-8&quot;&gt;
-    &lt;title&gt;Mini • Home&lt;/title&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Bare Metal PHP • Home&lt;/title&gt;
 &lt;/head&gt;
 &lt;body&gt;
     &lt;h1&gt;Welcome, {{ $user-&gt;name }}&lt;/h1&gt;
@@ -794,27 +919,84 @@ View::setCachePath(__DIR__ . '/../storage/views');</pre></div>
                 The first time a view is requested, it is compiled and cached; subsequent requests use the cached file
                 until the source template timestamp changes.
             </p>
+
+            <h3>Using Views in Controllers</h3>
+            <div class="code-block"><pre>use BareMetalPHP\View\View;
+
+public function index(): Response
+{
+    return View::make('home', [
+        'name' =&gt; 'World'
+    ]);
+}
+
+// Or using the helper function
+return view('home', ['name' =&gt; 'World']);</pre></div>
+        </section>
+
+        <!-- DATABASE CONFIGURATION -->
+        <section class="doc-section" id="database-config">
+            <h2>Database Configuration</h2>
+            <p>
+                The framework supports multiple database drivers: SQLite, MySQL, and PostgreSQL. Database configuration is managed through <code>config/database.php</code> and environment variables.
+            </p>
+
+            <h3>Configuration File</h3>
+            <p>
+                The <code>config/database.php</code> file defines all available database connections:
+            </p>
+
+            <div class="code-block"><pre>return [
+    'default' =&gt; env('DB_CONNECTION', 'sqlite'),
+    'connections' =&gt; [
+        'sqlite' =&gt; [
+            'driver' =&gt; 'sqlite',
+            'database' =&gt; env('DB_DATABASE', database_path('database.sqlite')),
+        ],
+        'mysql' =&gt; [
+            'driver' =&gt; 'mysql',
+            'host' =&gt; env('DB_HOST', '127.0.0.1'),
+            'port' =&gt; env('DB_PORT', 3306),
+            'database' =&gt; env('DB_DATABASE', 'forge'),
+            'username' =&gt; env('DB_USERNAME', 'forge'),
+            'password' =&gt; env('DB_PASSWORD', ''),
+            'charset' =&gt; env('DB_CHARSET', 'utf8mb4'),
+        ],
+        'pgsql' =&gt; [
+            'driver' =&gt; 'pgsql',
+            'host' =&gt; env('DB_HOST', '127.0.0.1'),
+            'port' =&gt; env('DB_PORT', 5432),
+            'database' =&gt; env('DB_DATABASE', 'forge'),
+            'username' =&gt; env('DB_USERNAME', 'forge'),
+            'password' =&gt; env('DB_PASSWORD', ''),
+            'charset' =&gt; env('DB_CHARSET', 'utf8'),
+        ],
+    ],
+];</pre></div>
+
+            <p>
+                The framework automatically handles driver-specific SQL differences (identifier quoting, LIMIT/OFFSET syntax, boolean types, etc.) so your code works across all supported databases.
+            </p>
         </section>
 
         <!-- MODELS -->
         <section class="doc-section" id="models">
             <h2>Models &amp; ActiveRecord</h2>
             <p>
-                Models extend <code>Framework\Database\Model</code> and map to database tables. The base model provides:
+                Models extend <code>BareMetalPHP\Database\Model</code> and map to database tables. The base model provides:
             </p>
             <ul>
-                <li>Static connection via <code>Model::setConnection()</code>.</li>
                 <li>ActiveRecord operations: <code>save()</code>, <code>delete()</code>, <code>all()</code>, <code>find()</code>.</li>
                 <li>Magic attributes via <code>__get</code>/<code>__set</code> and accessor/mutator methods.</li>
-                <li>Naive timestamps (<code>created_at</code>, <code>updated_at</code>).</li>
-                <li>Relationship helpers: <code>hasMany</code>, <code>belongsTo</code>.</li>
+                <li>Timestamps (<code>created_at</code>, <code>updated_at</code>).</li>
+                <li>Relationship helpers: <code>hasOne</code>, <code>hasMany</code>, <code>belongsTo</code>, <code>belongsToMany</code>.</li>
             </ul>
 
             <div class="code-block"><pre>// app/Models/User.php
 
 namespace App\Models;
 
-use Framework\Database\Model;
+use BareMetalPHP\Database\Model;
 
 class User extends Model
 {
@@ -863,8 +1045,8 @@ echo $user-&gt;posts-&gt;count(); // posts() relationship, wrapped in a Collecti
         <section class="doc-section" id="builder">
             <h2>Query Builder &amp; Collection</h2>
             <p>
-                The <code>Framework\Database\Builder</code> class provides a small fluent query builder for SELECT
-                queries. Results are wrapped in <code>Framework\Support\Collection</code>, an iterable helper with
+                The <code>BareMetalPHP\Database\Builder</code> class provides a fluent query builder for SELECT
+                queries. Results are wrapped in <code>BareMetalPHP\Support\Collection</code>, an iterable helper with
                 <code>map</code>, <code>filter</code>, <code>first</code>, <code>pluck</code>, and more.
             </p>
 
@@ -887,13 +1069,12 @@ $names = $users
 
             <div class="code-block"><pre>User::all();                        // Collection&lt;User&gt;
 User::find(1);                      // ?User
-User::where('status', 'active');    // Collection&lt;User&gt;</pre></div>
+User::where('status', 'active')-&gt;get();    // Collection&lt;User&gt;</pre></div>
 
             <div class="card">
                 <span class="badge">note</span>
                 <p style="margin-top:6px;">
-                    The builder currently targets SQLite and focuses on SELECT queries. It is intentionally minimal so
-                    you can read and extend it as needed (joins, aggregates, pagination, etc.).
+                    The builder automatically adapts SQL syntax for SQLite, MySQL, and PostgreSQL. It handles identifier quoting, LIMIT/OFFSET syntax, and data type differences automatically.
                 </p>
             </div>
         </section>
@@ -902,8 +1083,7 @@ User::where('status', 'active');    // Collection&lt;User&gt;</pre></div>
         <section class="doc-section" id="migrations">
             <h2>Migrations &amp; Console Commands</h2>
             <p>
-                mini ships with a small console kernel that powers the <code>php mini</code> CLI. Commands are
-                registered in <code>Framework\Console\Application</code>.
+                Bare Metal PHP ships with a CLI tool (<code>php mini</code>) that provides various commands.
             </p>
 
             <div class="code-block"><pre>$ php mini
@@ -912,7 +1092,8 @@ Available commands:
   make:controller
   make:migration
   migrate
-  migrate:rollback</pre></div>
+  migrate:rollback
+  frontend:install</pre></div>
 
             <h3>Creating &amp; Running Migrations</h3>
 
@@ -920,23 +1101,24 @@ Available commands:
 $ php mini make:migration create_users_table</pre></div>
 
             <p>
-                The generated file returns an anonymous class extending <code>Framework\Database\Migration</code> with
-                <code>up()</code> and <code>down()</code> methods. Inside, use the underlying PDO connection directly:
+                The generated file returns an anonymous class extending <code>BareMetalPHP\Database\Migration</code> with
+                <code>up()</code> and <code>down()</code> methods:
             </p>
 
             <div class="code-block"><pre>// database/migrations/20241204120000_create_users_table.php
 
-use Framework\Database\Migration;
-use Framework\Database\Connection;
+use BareMetalPHP\Database\Migration;
+use BareMetalPHP\Database\Connection;
 
 return new class extends Migration {
     public function up(Connection $connection): void
     {
-        $connection-&gt;pdo()-&gt;exec(<<<SQL
+        $connection-&gt;pdo()-&gt;exec(&lt;&lt;&lt;SQL
 CREATE TABLE users (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     name        TEXT NOT NULL,
     email       TEXT NOT NULL,
+    password    TEXT NOT NULL,
     created_at  TEXT,
     updated_at  TEXT
 );
@@ -956,27 +1138,278 @@ $ php mini migrate
 $ php mini migrate:rollback</pre></div>
         </section>
 
+        <!-- AUTH -->
+        <section class="doc-section" id="auth">
+            <h2>Authentication</h2>
+            <p>
+                Bare Metal PHP includes a simple authentication system using sessions. The <code>BareMetalPHP\Auth\Auth</code> class provides methods for user authentication.
+            </p>
+
+            <h3>Authenticating Users</h3>
+            <div class="code-block"><pre>use BareMetalPHP\Auth\Auth;
+
+// Attempt to authenticate with email and password
+$user = Auth::attempt($email, $password);
+
+if ($user) {
+    // User is now logged in
+    return redirect('/dashboard');
+} else {
+    // Authentication failed
+    return redirect('/login')-&gt;with('error', 'Invalid credentials');
+}
+
+// Manually log in a user
+Auth::login($user);
+
+// Log out
+Auth::logout();
+
+// Check if user is authenticated
+if (Auth::check()) {
+    $user = Auth::user();
+}
+
+// Get authenticated user
+$user = Auth::user();
+
+// Get authenticated user ID
+$userId = Auth::id();</pre></div>
+
+            <h3>Using in Controllers</h3>
+            <div class="code-block"><pre>// app/Http/Controllers/LoginController.php
+
+public function login(Request $request): Response
+{
+    $user = Auth::attempt(
+        $request-&gt;input('email'),
+        $request-&gt;input('password')
+    );
+
+    if (!$user) {
+        return redirect('/login');
+    }
+
+    return redirect('/dashboard');
+}
+
+// Using the helper function
+use function auth;
+
+$user = auth(); // Returns the authenticated user or null</pre></div>
+        </section>
+
+        <!-- SESSIONS -->
+        <section class="doc-section" id="sessions">
+            <h2>Sessions</h2>
+            <p>
+                Sessions are managed through the <code>BareMetalPHP\Support\Session</code> class. Sessions must be started in your <code>public/index.php</code> file.
+            </p>
+
+            <h3>Session Usage</h3>
+            <div class="code-block"><pre>use BareMetalPHP\Support\Session;
+
+// Start session (in public/index.php)
+Session::start();
+
+// Set a session value
+Session::set('key', 'value');
+
+// Get a session value
+$value = Session::get('key');
+
+// Check if session has a key
+if (Session::has('key')) {
+    // ...
+}
+
+// Remove a session value
+Session::remove('key');
+
+// Get all session data
+$all = Session::all();
+
+// Regenerate session ID
+Session::regenerate();</pre></div>
+
+            <h3>Helper Function</h3>
+            <div class="code-block"><pre>// Using the session helper
+session('key', 'value');        // Set
+$value = session('key');        // Get
+$all = session();               // Get all</pre></div>
+        </section>
+
+        <!-- LOGGING -->
+        <section class="doc-section" id="logging">
+            <h2>Logging</h2>
+            <p>
+                Bare Metal PHP includes a logging system that writes to files in <code>storage/logs</code>. The logging service provider automatically configures the log path.
+            </p>
+
+            <h3>Logging Messages</h3>
+            <div class="code-block"><pre>use BareMetalPHP\Support\Log;
+
+// Different log levels
+Log::emergency('System is unusable');
+Log::alert('Action must be taken immediately');
+Log::critical('Critical conditions');
+Log::error('Error occurred');
+Log::warning('Warning message');
+Log::notice('Normal but significant condition');
+Log::info('Informational message');
+Log::debug('Debug-level message');
+
+// With context
+Log::error('User login failed', [
+    'user_id' =&gt; 123,
+    'ip' =&gt; $request-&gt;getIp()
+]);</pre></div>
+
+            <h3>Helper Functions</h3>
+            <div class="code-block"><pre>// Using helper functions
+log_info('Something happened');
+log_error('An error occurred');
+log_warning('Be careful');</pre></div>
+        </section>
+
+        <!-- FRONTEND -->
+        <section class="doc-section" id="frontend">
+            <h2>Frontend Integration</h2>
+            <p>
+                Bare Metal PHP includes optional support for modern frontend frameworks (React and Vue) with Vite for hot module replacement and asset bundling.
+            </p>
+
+            <h3>Installation</h3>
+            <p>
+                Install frontend integration using the CLI command:
+            </p>
+
+            <div class="code-block"><pre># Install React
+php mini frontend:install react
+
+# Install Vue
+php mini frontend:install vue</pre></div>
+
+            <p>
+                This will create the necessary files and configuration. Then:
+            </p>
+
+            <div class="code-block"><pre># Install Node.js dependencies
+npm install
+
+# Start Vite dev server (in a separate terminal)
+npm run dev
+
+# Start PHP server
+php mini serve</pre></div>
+
+            <h3>Using in Controllers</h3>
+            <div class="code-block"><pre>use function spa;
+
+// Render an SPA component
+return spa('Dashboard', [
+    'user' =&gt; Auth::user()
+]);</pre></div>
+
+            <h3>Asset Management</h3>
+            <div class="code-block"><pre>use function vite;
+
+// In your views
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;?php echo vite()-&gt;viteClient(); ?&gt;
+    &lt;?php echo vite()-&gt;styles('resources/js/main.jsx'); ?&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div id="app"&gt;&lt;/div&gt;
+    &lt;?php echo vite()-&gt;script('resources/js/main.jsx'); ?&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div>
+
+            <p>
+                Make sure to register <code>FrontendServiceProvider</code> in <code>bootstrap/providers.php</code> to use frontend features.
+            </p>
+        </section>
+
+        <!-- HELPERS -->
+        <section class="doc-section" id="helpers">
+            <h2>Helper Functions</h2>
+            <p>
+                Bare Metal PHP includes several global helper functions for common tasks:
+            </p>
+
+            <h3>HTTP &amp; Responses</h3>
+            <div class="code-block"><pre>// Create responses
+response('Hello', 200, ['Content-Type' =&gt; 'text/plain']);
+json_response(['key' =&gt; 'value'], 200);
+
+// Redirects
+redirect('/dashboard');
+redirect('/login', 301);
+
+// Abort request
+abort(404);
+abort(403, 'Access denied');</pre></div>
+
+            <h3>URLs &amp; Routes</h3>
+            <div class="code-block"><pre>// Generate URLs
+url('/path');              // Full URL
+asset('css/style.css');    // Asset URL
+
+// Generate route URLs
+route('users.show', ['id' =&gt; 1]);</pre></div>
+
+            <h3>Views</h3>
+            <div class="code-block"><pre>// Create view responses
+view('home', ['name' =&gt; 'World']);</pre></div>
+
+            <h3>Configuration &amp; Environment</h3>
+            <div class="code-block"><pre>// Get config values
+config('database.default');
+config('app.name', 'Default');
+
+// Get environment variables
+env('APP_DEBUG', false);
+env('DB_HOST', 'localhost');</pre></div>
+
+            <h3>Utilities</h3>
+            <div class="code-block"><pre>// Dump and die (debugging)
+dd($variable);
+dump($variable);
+
+// Path helpers
+base_path('app/Models');
+database_path('migrations');</pre></div>
+        </section>
+
         <!-- ERRORS -->
         <section class="doc-section" id="errors">
             <h2>Error Pages &amp; Debug Experience</h2>
             <p>
                 In debug mode (<code>APP_DEBUG=true</code>), unhandled exceptions are rendered using
-                <code>Framework\Exceptions\ErrorPageRenderer</code> – a Whoops-style dark error page that shows:
+                <code>BareMetalPHP\Exceptions\ErrorPageRenderer</code> – a dark error page that shows:
             </p>
             <ul>
                 <li>Exception class, message, file and line.</li>
                 <li>Code excerpt with the failing line highlighted.</li>
-                <li>Stack trace with “App” vs “Framework” frames and a toggle.</li>
+                <li>Stack trace with "App" vs "Framework" frames.</li>
                 <li>Request context: method, URI, client IP and superglobals (GET, POST, cookies, headers).</li>
                 <li>Container bindings: registered bindings, singletons and instances.</li>
                 <li>A saved HTML snapshot link under <code>public/debug/&lt;id&gt;.html</code>.</li>
             </ul>
 
-            <div class="code-block"><pre>// public/index.php
+            <p>
+                API requests (routes starting with <code>/api/</code>) automatically receive JSON error responses:
+            </p>
 
-putenv('APP_DEBUG=true');      // for development
-
-// Kernel::handle() already wraps exceptions and delegates to ErrorPageRenderer</pre></div>
+            <div class="code-block"><pre>{
+    "error": "Internal Server Error",
+    "message": "Error message here",
+    "file": "path/to/file.php",
+    "line": 42,
+    "trace": [...]
+}</pre></div>
 
             <div class="card">
                 <span class="badge warn">production</span>
@@ -987,29 +1420,51 @@ putenv('APP_DEBUG=true');      // for development
             </div>
         </section>
 
-        <!-- ROADMAP -->
-        <section class="doc-section" id="roadmap">
-            <h2>Next Steps &amp; Ideas</h2>
+        <!-- TESTING -->
+        <section class="doc-section" id="testing">
+            <h2>Testing</h2>
             <p>
-                mini is intentionally incomplete so you can grow it as you learn. Natural next features include:
+                Bare Metal PHP includes a comprehensive PHPUnit test suite. Tests are located in the <code>tests/</code> directory of the framework library.
             </p>
-            <ul>
-                <li>View layouts and sections (<code>@extends</code>, <code>@section</code>, <code>@yield</code>).</li>
-                <li>Soft deletes and global scopes on models.</li>
-                <li>More query builder features (joins, aggregates, pagination helpers).</li>
-                <li>HTTP testing helpers and an in-memory test kernel.</li>
-                <li>Enhanced configuration system with environment variable support.</li>
-                <li>Routing groups, middleware per route, named routes and URL generation.</li>
-                <li>Session management, CSRF protection, and authentication.</li>
-            </ul>
 
-            <div class="divider"></div>
+            <h3>Running Tests</h3>
+            <div class="code-block"><pre># Run all tests
+composer test
 
+# Or directly
+vendor/bin/phpunit
+
+# Run specific test suite
+vendor/bin/phpunit tests/Unit
+vendor/bin/phpunit tests/Feature
+
+# Run with coverage
+vendor/bin/phpunit --coverage-html coverage/</pre></div>
+
+            <h3>Writing Tests</h3>
             <p>
-                The real power of this framework is that you own every line. Treat this documentation as a jumping-off
-                point: open the classes mentioned here, trace through the flow, and don’t be afraid to break things and
-                rebuild them.
+                Create test files in your application's <code>tests/</code> directory:
             </p>
+
+            <div class="code-block"><pre>namespace Tests;
+
+use PHPUnit\Framework\TestCase;
+use BareMetalPHP\Application;
+
+class ExampleTest extends TestCase
+{
+    protected Application $app;
+
+    protected function setUp(): void
+    {
+        $this-&gt;app = require __DIR__ . '/../bootstrap/app.php';
+    }
+
+    public function testExample(): void
+    {
+        $this-&gt;assertTrue(true);
+    }
+}</pre></div>
         </section>
     </main>
 </div>
@@ -1044,12 +1499,11 @@ putenv('APP_DEBUG=true');      // for development
         // IntersectionObserver to update active nav-link while scrolling
         const observerOptions = {
             root: null,
-            rootMargin: '-30% 0px -50% 0px', // consider section active when roughly in middle of viewport
+            rootMargin: '-30% 0px -50% 0px',
             threshold: 0
         };
 
         const observer = new IntersectionObserver((entries) => {
-            // Find the entry that is intersecting and has the largest intersectionRatio
             const visible = entries.filter(e => e.isIntersecting).sort((a,b) => b.intersectionRatio - a.intersectionRatio);
             const activeId = visible[0]?.target?.id;
 
@@ -1058,7 +1512,6 @@ putenv('APP_DEBUG=true');      // for development
             });
         }, observerOptions);
 
-        // Observe all registered sections
         sections.forEach((section) => observer.observe(section));
     })();
 </script>
@@ -1066,22 +1519,18 @@ putenv('APP_DEBUG=true');      // for development
 <!-- Highlight.js (syntax highlighting) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
 <script>
-    // Wrap <pre> contents in <code> for highlight.js, then highlight
     (function () {
         const blocks = document.querySelectorAll('.code-block > pre');
 
         blocks.forEach(pre => {
-            // If already has a <code> child, skip
             if (pre.querySelector('code')) return;
 
             const code = document.createElement('code');
-            // preserve innerHTML (content is already escaped in the docs)
             code.innerHTML = pre.innerHTML;
             pre.innerHTML = '';
             pre.appendChild(code);
         });
 
-        // Initialize highlight.js on all blocks
         if (window.hljs) {
             document.querySelectorAll('.code-block pre code').forEach((el) => {
                 try { hljs.highlightElement(el); } catch (e) { /* ignore */ }
