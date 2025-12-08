@@ -1,1796 +1,835 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Bare Metal PHP • Documentation</title>
-    
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-
+    <meta charset="UTF-8" />
+    <title>BareMetalPHP - Lightning-Fast PHP with Go</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
     <style>
-        * { 
-            box-sizing: border-box;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
         :root {
-            /* Modern dark theme - similar to VS Code Dark+ or One Dark Pro */
-            --bg-primary: #1e1e1e;
-            --bg-secondary: #252526;
-            --bg-tertiary: #2d2d30;
-            --bg-elevated: #2d2d30;
-            --bg-hover: #37373d;
-            
-            --border: #3e3e42;
-            --border-light: #5a5a5a;
-            
-            --text: #d4d4d4;
-            --text-muted: #569cd6;
-            --text-subtle: #9cdcfe;
-            --text-dim: #858585;
-            
-            --accent: #007acc;
-            --accent-hover: #0098ff;
-            --accent-soft: rgba(0, 122, 204, 0.15);
-            
-            --success: #4ec9b0;
-            --warning: #dcdcaa;
-            --error: #f48771;
-            --info: #4ec9b0;
-            
-            --code-bg: #1e1e1e;
-            --code-border: #3e3e42;
-            --code-text: #d4d4d4;
-            
-            --shadow: rgba(0, 0, 0, 0.3);
-            --shadow-lg: rgba(0, 0, 0, 0.5);
+            --primary: #06b6d4;
+            --primary-dark: #0891b2;
+            --accent: #f97316;
+            --bg-dark: #0a0e1a;
+            --bg-darker: #050810;
+            --bg-card: #111827;
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --border: #1f2937;
+            --code-bg: #1e293b;
+            --sidebar-width: 280px;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text);
-            line-height: 1.8;
-            font-size: 16px;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
         }
 
-        /* Mobile Menu Toggle */
-        .mobile-menu-toggle {
-            display: none;
+        /* Hero Background Effect */
+        .hero-bg {
             position: fixed;
-            top: 16px;
-            left: 16px;
-            z-index: 1001;
-            background: var(--bg-elevated);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 10px 12px;
-            color: var(--text);
-            cursor: pointer;
-            transition: all 0.2s;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 600px;
+            background: radial-gradient(ellipse at top, rgba(6, 182, 212, 0.15), transparent 70%),
+                        radial-gradient(ellipse at bottom right, rgba(249, 115, 22, 0.1), transparent 60%);
+            pointer-events: none;
+            z-index: 0;
         }
 
-        .mobile-menu-toggle:hover {
-            background: var(--bg-hover);
-        }
-
-        .mobile-menu-toggle svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        /* Layout */
-        .layout {
+        .container {
             display: flex;
-            min-height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
         /* Sidebar */
         .sidebar {
-            width: 280px;
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border);
+            width: var(--sidebar-width);
             position: fixed;
             height: 100vh;
             overflow-y: auto;
-            overflow-x: hidden;
-            z-index: 100;
-            transition: transform 0.3s ease;
-            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+            padding: 2rem 1.5rem;
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid var(--border);
         }
 
         .sidebar::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
 
         .sidebar::-webkit-scrollbar-track {
-            background: var(--bg-secondary);
+            background: transparent;
         }
 
         .sidebar::-webkit-scrollbar-thumb {
             background: var(--border);
-            border-radius: 4px;
+            border-radius: 3px;
         }
 
-        .sidebar::-webkit-scrollbar-thumb:hover {
-            background: var(--border-light);
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2.5rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
         }
 
-        .sidebar-content {
-            padding: 24px 20px;
-        }
-
-        .brand {
-            margin-bottom: 32px;
-            padding-bottom: 24px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .brand-logo {
+        .logo-icon {
             width: 32px;
             height: 32px;
-            border-radius: 6px;
-            margin-bottom: 12px;
-            display: block;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
         }
 
-        .brand-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            border-radius: 6px;
+        .nav-section {
+            margin-bottom: 1.5rem;
         }
 
-        .brand-text {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 4px;
-        }
-
-        .brand-subtitle {
-            font-size: 12px;
-            color: var(--text-dim);
+        .nav-section-title {
+            font-size: 0.75rem;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .sidebar-section {
-            margin-bottom: 32px;
-        }
-
-        .sidebar-section-title {
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-dim);
-            margin-bottom: 12px;
-        }
-
-        .nav-list {
-            list-style: none;
-        }
-
-        .nav-list li {
-            margin-bottom: 4px;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            padding: 0 0.75rem;
         }
 
         .nav-link {
-            display: flex;
-            align-items: center;
-            padding: 8px 12px;
-            color: var(--text-subtle);
+            display: block;
+            padding: 0.5rem 0.75rem;
+            color: var(--text-secondary);
             text-decoration: none;
             border-radius: 6px;
-            font-size: 14px;
             transition: all 0.2s;
-            position: relative;
+            font-size: 0.9rem;
         }
 
         .nav-link:hover {
-            background: var(--bg-elevated);
-            color: var(--text);
+            color: var(--text-primary);
+            background: rgba(6, 182, 212, 0.1);
         }
 
         .nav-link.active {
-            background: var(--accent-soft);
-            color: var(--text-subtle);
-            font-weight: 600;
-        }
-
-        .nav-link.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 3px;
-            height: 60%;
-            background: var(--accent);
-            border-radius: 0 2px 2px 0;
-        }
-
-        .sidebar-footer {
-            margin-top: auto;
-            padding-top: 24px;
-            border-top: 1px solid var(--border);
-            font-size: 12px;
-            color: var(--text-dim);
-        }
-
-        .sidebar-footer code {
-            background: var(--bg-tertiary);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 11px;
-            color: var(--text-subtle);
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
-            border: 1px solid var(--border);
+            color: var(--primary);
+            background: rgba(6, 182, 212, 0.15);
+            font-weight: 500;
         }
 
         /* Main Content */
-        .content-wrapper {
+        .main-content {
+            margin-left: var(--sidebar-width);
             flex: 1;
-            margin-left: 280px;
-            min-height: 100vh;
-            background: var(--bg-primary);
-        }
-
-        .content {
+            padding: 3rem 4rem;
             max-width: 900px;
-            margin: 0 auto;
-            padding: 48px 40px 80px;
-            background: var(--bg-primary);
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* Hero Section */
+        .hero {
+            padding: 4rem 0 6rem;
         }
 
-        .doc-section {
-            animation: fadeIn 0.4s ease;
-            margin-bottom: 64px;
-            scroll-margin-top: 24px;
-        }
-
-        .doc-section h1 {
-            font-size: 42px;
+        .hero h1 {
+            font-size: 3.5rem;
             font-weight: 800;
-            margin: 0 0 16px;
-            color: var(--text);
-            letter-spacing: -0.02em;
-            line-height: 1.2;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .doc-section h2 {
-            font-size: 32px;
+        .hero-subtitle {
+            font-size: 1.35rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-block;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            background: rgba(6, 182, 212, 0.1);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.75rem;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(6, 182, 212, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.15rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Sections */
+        section {
+            margin: 5rem 0;
+            scroll-margin-top: 2rem;
+        }
+
+        h2 {
+            font-size: 2rem;
             font-weight: 700;
-            margin: 56px 0 20px;
-            color: var(--text);
-            padding-top: 24px;
-            border-top: 1px solid var(--border);
-            letter-spacing: -0.01em;
-        }
-
-        .doc-section h3 {
-            font-size: 24px;
-            font-weight: 600;
-            margin: 40px 0 16px;
-            color: var(--text);
-        }
-
-        .doc-section h4 {
-            font-size: 19px;
-            font-weight: 600;
-            margin: 32px 0 12px;
-            color: var(--text);
-        }
-
-        .doc-section p {
-            margin: 16px 0;
-            color: var(--text);
-            line-height: 1.9;
-            font-size: 16px;
-        }
-
-        .doc-section strong {
-            color: var(--text);
-            font-weight: 600;
-        }
-
-        .doc-section ul,
-        .doc-section ol {
-            margin: 16px 0 16px 24px;
-            color: var(--text);
-            line-height: 1.9;
-            font-size: 16px;
-        }
-
-        .doc-section li {
-            margin: 10px 0;
-        }
-
-        .doc-section ul ul,
-        .doc-section ol ol {
-            margin-top: 8px;
-            margin-bottom: 8px;
-        }
-
-        /* Pill/Badge */
-        .pill {
-            display: inline-flex;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            background: var(--accent-soft);
-            color: var(--accent);
-            margin-bottom: 24px;
+            gap: 0.75rem;
         }
 
-        .pill span.dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--accent);
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 2.5rem 0 1rem;
+            color: var(--text-primary);
+        }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 1.25rem;
+            font-size: 1rem;
+        }
+
+        ul {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        ul li {
+            padding: 0.5rem 0 0.5rem 1.75rem;
+            color: var(--text-secondary);
+            position: relative;
+        }
+
+        ul li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
         }
 
         /* Code Blocks */
-        .code-block {
-            margin: 24px 0;
-            border-radius: 8px;
-            border: 1px solid var(--code-border);
+        pre {
             background: var(--code-bg);
-            overflow: hidden;
-            box-shadow: 0 4px 12px var(--shadow);
-        }
-
-        .code-block pre {
-            margin: 0;
-            padding: 20px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
             overflow-x: auto;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
-            font-size: 14px;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
             line-height: 1.6;
-            color: var(--code-text);
-        }
-
-        .code-block code {
-            font-family: inherit;
-            font-size: inherit;
         }
 
         code {
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
-            font-size: 0.9em;
-            background: var(--bg-tertiary);
-            padding: 2px 6px;
+            color: #e2e8f0;
+            font-family: 'Fira Code', 'Courier New', monospace;
+        }
+
+        .inline-code {
+            background: var(--code-bg);
+            padding: 0.2rem 0.5rem;
             border-radius: 4px;
-            color: var(--text-subtle);
-            border: 1px solid var(--border);
+            font-size: 0.9em;
+            color: var(--primary);
+            font-family: 'Fira Code', monospace;
         }
 
-        /* Grid */
-        .grid {
-            display: grid;
-            gap: 24px;
-            margin: 24px 0;
-        }
-
-        .grid-2 {
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        }
-
-        /* Cards */
-        .card {
-            background: var(--bg-elevated);
+        /* Architecture Diagram */
+        .arch-diagram {
+            background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 24px;
-            transition: all 0.3s ease;
+            padding: 2rem;
+            margin: 2rem 0;
+            overflow-x: auto;
         }
 
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px var(--shadow-lg);
-            border-color: var(--border-light);
-        }
-
-        .card h3 {
-            margin-top: 0;
-            margin-bottom: 16px;
-            color: var(--text);
-        }
-
-        .card ul {
-            margin: 0;
-        }
-
-        /* Badges */
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .badge.success {
-            background: rgba(80, 250, 123, 0.15);
-            color: var(--success);
-        }
-
-        .badge.warn {
-            background: rgba(241, 250, 140, 0.15);
-            color: var(--warning);
-        }
-
-        .badge.info {
-            background: rgba(139, 233, 253, 0.15);
-            color: var(--info);
-        }
-
-        /* Links */
-        a.inline-link {
-            color: var(--text-subtle);
-            text-decoration: none;
-            border-bottom: 1px solid transparent;
-            transition: border-color 0.2s;
-        }
-
-        a.inline-link:hover {
-            color: var(--accent);
-            border-bottom-color: var(--accent);
-        }
-
-        /* Divider */
-        .divider {
-            height: 1px;
-            background: var(--border);
-            margin: 32px 0;
+        .arch-diagram pre {
+            background: transparent;
             border: none;
+            padding: 0;
+            margin: 0;
+            font-size: 0.85rem;
         }
 
-        /* Mobile Styles */
+        /* Alert Box */
+        .alert {
+            background: rgba(6, 182, 212, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 1.25rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        .alert strong {
+            color: var(--primary);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive */
         @media (max-width: 1024px) {
-            .content-wrapper {
-                margin-left: 0;
-            }
-
-            .mobile-menu-toggle {
-                display: block;
-            }
-
             .sidebar {
                 transform: translateX(-100%);
+                transition: transform 0.3s;
             }
 
             .sidebar.open {
                 transform: translateX(0);
             }
 
-            .content {
-                padding: 80px 24px 48px;
+            .main-content {
+                margin-left: 0;
+                padding: 2rem 1.5rem;
             }
 
-            .doc-section h1 {
-                font-size: 36px;
+            .hero h1 {
+                font-size: 2.5rem;
             }
 
-            .doc-section h2 {
-                font-size: 28px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .content {
-                padding: 80px 20px 48px;
-            }
-
-            .doc-section h1 {
-                font-size: 32px;
-            }
-
-            .doc-section h2 {
-                font-size: 24px;
-                margin-top: 48px;
-            }
-
-            .code-block pre {
-                padding: 16px;
-                font-size: 13px;
-            }
-
-            .grid-2 {
+            .feature-grid {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* Overlay for mobile menu */
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 99;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .sidebar-overlay.show {
-            display: block;
-            opacity: 1;
-        }
-
-        @media (max-width: 1024px) {
-            .sidebar-overlay.show {
-                display: block;
-            }
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/tokyo-night-dark.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
 </head>
 <body>
-    <button class="mobile-menu-toggle" id="menuToggle" aria-label="Toggle menu">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-    </button>
 
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="hero-bg"></div>
 
-    <div class="layout">
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-content">
-                <div class="brand">
-                    <div class="brand-logo">
-                        <img src="favicon.ico" alt="Bare Metal PHP">
-                    </div>
-                    <div class="brand-text">Bare Metal PHP</div>
-                    <div class="brand-subtitle">Documentation</div>
-                </div>
+<div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">⚡</div>
+            <span>BareMetalPHP</span>
+        </div>
 
-                <div class="sidebar-section">
-                    <div class="sidebar-section-title">Overview</div>
-                    <ul class="nav-list">
-                        <li><a class="nav-link active" data-target="intro">Introduction</a></li>
-                        <li><a class="nav-link" data-target="installation">Installation</a></li>
-                        <li><a class="nav-link" data-target="getting-started">Getting Started</a></li>
-                        <li><a class="nav-link" data-target="structure">Directory Structure</a></li>
-                    </ul>
-                </div>
-
-                <div class="sidebar-section">
-                    <div class="sidebar-section-title">Core</div>
-                    <ul class="nav-list">
-                        <li><a class="nav-link" data-target="container">Service Container</a></li>
-                        <li><a class="nav-link" data-target="providers">Service Providers</a></li>
-                        <li><a class="nav-link" data-target="http">HTTP Kernel &amp; Middleware</a></li>
-                        <li><a class="nav-link" data-target="routing">Routing &amp; Controllers</a></li>
-                        <li><a class="nav-link" data-target="views">Views &amp; Templates</a></li>
-                    </ul>
-                </div>
-
-                <div class="sidebar-section">
-                    <div class="sidebar-section-title">Data Layer</div>
-                    <ul class="nav-list">
-                        <li><a class="nav-link" data-target="models">Models &amp; ActiveRecord</a></li>
-                        <li><a class="nav-link" data-target="builder">Query Builder &amp; Collections</a></li>
-                        <li><a class="nav-link" data-target="migrations">Migrations &amp; CLI</a></li>
-                    </ul>
-                </div>
-
-                <div class="sidebar-section">
-                    <div class="sidebar-section-title">Features</div>
-                    <ul class="nav-list">
-                        <li><a class="nav-link" data-target="auth">Authentication</a></li>
-                        <li><a class="nav-link" data-target="sessions">Sessions</a></li>
-                        <li><a class="nav-link" data-target="logging">Logging</a></li>
-                        <li><a class="nav-link" data-target="frontend">Frontend Integration</a></li>
-                        <li><a class="nav-link" data-target="helpers">Helper Functions</a></li>
-                    </ul>
-                </div>
-
-                <div class="sidebar-section">
-                    <div class="sidebar-section-title">Developer Experience</div>
-                    <ul class="nav-list">
-                        <li><a class="nav-link" data-target="errors">Error Pages &amp; Debug</a></li>
-                        <li><a class="nav-link" data-target="testing">Testing</a></li>
-                    </ul>
-                </div>
-
-                <div class="sidebar-footer">
-                    <div style="margin-bottom: 8px;">Run dev server:</div>
-                    <code>php mini serve</code>
-                </div>
+        <nav>
+            <div class="nav-section">
+                <div class="nav-section-title">Getting Started</div>
+                <a href="#intro" class="nav-link">Introduction</a>
+                <a href="#installation" class="nav-link">Installation</a>
+                <a href="#go-server" class="nav-link">Go App Server</a>
             </div>
-        </aside>
 
-        <div class="content-wrapper">
-            <main class="content">
-                <!-- INTRO -->
-                <section class="doc-section" id="intro">
-                    <div class="pill"><span class="dot"></span> Bare Metal PHP Framework</div>
-                    <h1>Introduction</h1>
-                    <p>
-                        <strong>Bare Metal PHP</strong> is a lightweight, educational PHP framework built to learn how modern frameworks
-                        actually work under the hood. It provides a service container, HTTP kernel with middleware pipeline, routing and
-                        controller resolution via reflection, a simple ActiveRecord ORM, query builder, and a tiny Blade-style
-                        templating engine.
-                    </p>
-                    <p>
-                        The goal is not to compete with full-stack frameworks, but to give you a clean, hackable codebase you
-                        completely understand.
-                    </p>
+            <div class="nav-section">
+                <div class="nav-section-title">The Basics</div>
+                <a href="#php-kernel" class="nav-link">PHP Kernel</a>
+                <a href="#routing" class="nav-link">Routing</a>
+                <a href="#controllers" class="nav-link">Controllers</a>
+                <a href="#di" class="nav-link">Dependency Injection</a>
+                <a href="#views" class="nav-link">Views & Templates</a>
+            </div>
 
-                    <div class="grid grid-2">
-                        <div class="card">
-                            <h3>Philosophy</h3>
-                            <ul>
-                                <li>Small, readable code over magical behavior.</li>
-                                <li>Feature set mirrors "early Eloquent / early Laravel".</li>
-                                <li>Every subsystem is something you can open and modify.</li>
-                                <li>Built with PHP 8.2+ features and modern best practices.</li>
-                            </ul>
-                        </div>
-                        <div class="card">
-                            <h3>Core Features</h3>
-                            <ul>
-                                <li>Service container with dependency injection &amp; service providers.</li>
-                                <li>Router with parameter binding, named routes &amp; implicit route model binding.</li>
-                                <li>View engine with <code>{{ }}</code>, <code>@if</code>, <code>@foreach</code> syntax.</li>
-                                <li>Models, relationships, query builder &amp; collections.</li>
-                                <li>Database migrations via CLI (<code>php mini ...</code>).</li>
-                                <li>Dark-mode debug error page with stack trace &amp; request context.</li>
-                                <li>Authentication, sessions, logging &amp; helper functions.</li>
-                                <li>Frontend integration (React/Vue with Vite).</li>
-                            </ul>
-                        </div>
-                    </div>
-                </section>
+            <div class="nav-section">
+                <div class="nav-section-title">Database</div>
+                <a href="#migrations" class="nav-link">Migrations</a>
+            </div>
 
-                <!-- INSTALLATION -->
-                <section class="doc-section" id="installation">
-                    <h2>Installation</h2>
-                    <p>
-                        Bare Metal PHP requires <strong>PHP 8.2+</strong> with the PDO extension. You can use SQLite (default), MySQL, or PostgreSQL.
-                    </p>
+            <div class="nav-section">
+                <div class="nav-section-title">Advanced</div>
+                <a href="#testing" class="nav-link">Testing</a>
+                <a href="#cli" class="nav-link">CLI Commands</a>
+                <a href="#architecture" class="nav-link">Architecture</a>
+            </div>
+        </nav>
+    </aside>
 
-                    <h3>Creating a New Project</h3>
-                    <p>
-                        The easiest way to get started is to use Composer to create a new project:
-                    </p>
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero -->
+        <div class="hero">
+            <h1>⚡ BareMetalPHP</h1>
+            <p class="hero-subtitle">
+                Lightning-fast PHP framework powered by Go. Persistent workers, hot reload, 
+                and multi-pool concurrency—without extensions.
+            </p>
+            <div class="cta-buttons">
+                <a href="#installation" class="btn btn-primary">Get Started</a>
+                <a href="#go-server" class="btn btn-secondary">View Features</a>
+            </div>
+        </div>
 
-                    <div class="code-block"><pre>composer create-project baremetalphp/baremetalphp my-app</pre></div>
+        <!-- Features -->
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3>Go-Powered Runtime</h3>
+                <p>Built-in Go application server with persistent PHP workers. No cold starts, no PHP-FPM.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔥</div>
+                <h3>Hot Reload</h3>
+                <p>Automatic file watching and reload. Code changes reflect instantly in development.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Multi-Pool Concurrency</h3>
+                <p>Separate fast and slow worker pools for optimal request handling.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📦</div>
+                <h3>Zero Extensions</h3>
+                <p>Pure PHP and Go. No Swoole, no Octane dependencies—just portable performance.</p>
+            </div>
+        </div>
 
-                    <p>
-                        This will create a new directory called <code>my-app</code> with a fresh Bare Metal PHP installation.
-                    </p>
+        <!-- INTRO -->
+        <section id="intro">
+            <h2>🎯 Introduction</h2>
+            <p>
+                BareMetalPHP is a modern, lightweight PHP framework built for speed, simplicity, and developer happiness.
+                It's powered by an optional <strong>Go application server</strong> that enables persistent PHP workers, 
+                hot reload, multi-pool concurrency, and static file acceleration.
+            </p>
 
-                    <h3>Quick Setup</h3>
-                    <p>After creating your project, follow these steps:</p>
+            <div class="alert">
+                <strong>Core Value Proposition</strong>
+                The Go App Server delivers performance similar to Laravel Octane or Swoole, but simpler, 
+                more portable, and without PHP extensions.
+            </div>
+        </section>
 
-                    <div class="code-block"><pre># 1. Navigate to your project
-cd my-app
+        <!-- INSTALLATION -->
+        <section id="installation">
+            <h2>📦 Installation</h2>
+            
+            <h3>Create a New Project</h3>
+            <pre><code class="language-bash">composer create-project baremetalphp/baremetalphp myapp
+cd myapp</code></pre>
 
-# 2. Install dependencies (if not done automatically)
-composer install
+            <h3>Start the Development Server</h3>
+            <pre><code class="language-bash">php mini serve</code></pre>
 
-# 3. Create environment file
-cp .env.example .env
+            <p>Your application is now running at <span class="inline-code">http://localhost:8000</span></p>
+        </section>
 
-# 4. Create SQLite database (or configure MySQL/PostgreSQL in .env)
-touch database.sqlite
+        <!-- GO SERVER -->
+        <section id="go-server">
+            <h2>🚀 Go Application Server</h2>
+            <p>
+                The BareMetalPHP Go Application Server is a high-performance, production-ready runtime 
+                that replaces traditional PHP-FPM with persistent PHP workers.
+            </p>
 
-# 5. Run migrations
-php mini migrate
+            <h3>✨ Key Features</h3>
+            <ul>
+                <li>Persistent PHP workers (no cold starts)</li>
+                <li>Fast/slow worker classification for optimal load balancing</li>
+                <li>Automatic hot reload via fsnotify</li>
+                <li>Static asset acceleration</li>
+                <li>JSON bridge protocol between Go and PHP</li>
+            </ul>
 
-# 6. Start development server
-php mini serve</pre></div>
+            <h3>Installation</h3>
+            <p>Install the Go server scaffold:</p>
+            <pre><code class="language-bash">php mini go:install
+go mod tidy</code></pre>
 
-                    <p>
-                        Visit <code>http://127.0.0.1:9003</code> in your browser to see the welcome page!
-                    </p>
+            <h3>Start the Go Runtime</h3>
+            <pre><code class="language-bash">php mini go:serve</code></pre>
 
-                    <h3>Environment Configuration</h3>
-                    <p>
-                        Edit the <code>.env</code> file to configure your application:
-                    </p>
+            <h3>Configuration</h3>
+            <p>Edit <span class="inline-code">config/appserver.php</span>:</p>
+            <pre><code class="language-php">return [
+    'enabled'      => env('APPSERVER_ENABLED', false),
+    'fast_workers' => env('APPSERVER_FAST_WORKERS', 4),
+    'slow_workers' => env('APPSERVER_SLOW_WORKERS', 2),
+    'hot_reload'   => env('APPSERVER_HOT_RELOAD', true),
+];</code></pre>
 
-                    <div class="code-block"><pre>APP_NAME="My App"
-APP_DEBUG=true
-APP_URL=http://localhost:9003
+            <h3>Generated JSON Config</h3>
+            <pre><code class="language-json">{
+  "FastWorkers": 4,
+  "SlowWorkers": 2,
+  "HotReload": true,
+  "Static": [
+    {"Prefix": "/css/", "Dir": "public/css"},
+    {"Prefix": "/js/", "Dir": "public/js"},
+    {"Prefix": "/images/", "Dir": "public/images"}
+  ]
+}</code></pre>
 
-# Database (SQLite is default)
-DB_CONNECTION=sqlite
-DB_DATABASE=database.sqlite
+            <h3>Architecture Overview</h3>
+            <div class="arch-diagram">
+                <pre><code>┌──────────────┐     Request     ┌─────────────────────────┐
+│ Browser/CLI  │ ───────────────▶ │ BareMetalPHP Go Server │
+└──────────────┘                 │ • Static files          │
+                                 │ • Hot reload            │
+                                 │ • Worker scheduling     │
+                                 └─────────────┬───────────┘
+                                               │ Dispatch
+                                               ▼
+                                 ┌──────────────────────────┐
+                                 │ Persistent PHP Workers  │
+                                 │ • bootstrap_app.php     │
+                                 │ • bridge.php            │
+                                 └─────────────┬───────────┘
+                                               ▼
+                                 ┌──────────────────────────┐
+                                 │  BareMetalPHP Framework  │
+                                 │ • Router                 │
+                                 │ • Kernel                 │
+                                 │ • DI Container           │
+                                 │ • Controllers/Views      │
+                                 └──────────────────────────┘</code></pre>
+            </div>
+        </section>
 
-# For MySQL
-# DB_CONNECTION=mysql
-# DB_HOST=127.0.0.1
-# DB_PORT=3306
-# DB_DATABASE=myapp
-# DB_USERNAME=root
-# DB_PASSWORD=secret
+        <!-- PHP KERNEL -->
+        <section id="php-kernel">
+            <h2>🧠 PHP Kernel</h2>
+            <p>
+                The Kernel is the heart of BareMetalPHP. It receives requests from the Go server, 
+                resolves routes, executes controllers, and returns responses.
+            </p>
+            <p>
+                In persistent mode, the kernel bootstraps once and handles multiple requests, 
+                dramatically improving performance over traditional request-per-process models.
+            </p>
+        </section>
 
-# For PostgreSQL
-# DB_CONNECTION=pgsql
-# DB_HOST=127.0.0.1
-# DB_PORT=5432
-# DB_DATABASE=myapp
-# DB_USERNAME=postgres
-# DB_PASSWORD=secret</pre></div>
-                </section>
+        <!-- ROUTING -->
+        <section id="routing">
+            <h2>🛣 Routing</h2>
+            <p>Define your application routes with a clean, expressive syntax:</p>
 
-                <!-- GETTING STARTED -->
-                <section class="doc-section" id="getting-started">
-                    <h2>Getting Started</h2>
-                    <p>
-                        Bare Metal PHP applications start from <code>public/index.php</code>, which boots the application:
-                    </p>
+            <pre><code class="language-php">// Simple closure route
+$router->get('/', function () {
+    return "Hello world";
+});
 
-                    <div class="code-block"><pre>// public/index.php
+// Route with parameters
+$router->get('/user/{id}', 'UserController@show');
 
-&lt;?php
+// Named routes
+$router->get('/posts', 'PostController@index')->name('posts.index');
 
-declare(strict_types=1);
+// Route groups
+$router->group(['prefix' => 'api'], function ($router) {
+    $router->get('/users', 'UserController@index');
+    $router->post('/users', 'UserController@store');
+});</code></pre>
+        </section>
 
-use BareMetalPHP\Exceptions\ErrorPageRenderer;
-use BareMetalPHP\Http\Request;
-use BareMetalPHP\Http\Kernel;
+        <!-- CONTROLLERS -->
+        <section id="controllers">
+            <h2>📍 Controllers</h2>
+            <p>Controllers handle your application logic with automatic dependency injection:</p>
 
-require_once __DIR__ . '/../vendor/autoload.php';
+            <pre><code class="language-php">namespace App\Controllers;
 
-// Start session
-\BareMetalPHP\Support\Session::start();
-
-$app = require __DIR__ . '/../bootstrap/app.php';
-
-// Build Request from PHP Globals
-$request = Request::fromGlobals();
-
-$app->instance(Request::class, $request);
-
-/** @var Kernel $kernel */
-$kernel = $app->make(Kernel::class);
-
-$response = $kernel->handle($request);
-$response->send();</pre></div>
-
-                    <p>
-                        Routes live in <code>routes/web.php</code> and are automatically loaded by the <code>RoutingServiceProvider</code>.
-                    </p>
-
-                    <div class="code-block"><pre>// routes/web.php
-
-use BareMetalPHP\Routing\Router;
-use BareMetalPHP\View\View;
-
-return function (Router $router): void {
-    $router->get('/', function () {
-        return View::make('home', ['name' => 'World']);
-    });
-    
-    $router->get('/hello/{name}', function (string $name) {
-        return new Response("Hello, {$name}!");
-    });
-};</pre></div>
-                </section>
-
-                <!-- STRUCTURE -->
-                <section class="doc-section" id="structure">
-                    <h2>Directory Structure</h2>
-                    <p>A typical Bare Metal PHP application looks like:</p>
-
-                    <div class="code-block"><pre>.
-├── app
-│   ├── Http
-│   │   ├── Controllers
-│   │   └── Middleware
-│   ├── Models
-│   └── Providers
-│       └── AppServiceProvider.php
-├── bootstrap
-│   ├── app.php
-│   └── providers.php
-├── config
-│   └── database.php
-├── database
-│   ├── migrations
-│   └── database.sqlite
-├── public
-│   ├── index.php
-│   └── debug/              # saved debug html snapshots
-├── resources
-│   ├── views               # Blade-ish templates
-│   └── js                  # Frontend assets (if using React/Vue)
-├── routes
-│   └── web.php
-├── storage
-│   ├── views               # compiled templates
-│   └── logs                # log files
-└── vendor/                 # Composer dependencies</pre></div>
-                </section>
-
-                <!-- CONTAINER -->
-                <section class="doc-section" id="container">
-                    <h2>Service Container &amp; Bootstrapping</h2>
-                    <p>
-                        The <code>BareMetalPHP\Application</code> class is a lightweight IoC container. It is responsible for:
-                    </p>
-                    <ul>
-                        <li>Registering bindings and singletons.</li>
-                        <li>Resolving classes (including constructor injection via reflection).</li>
-                        <li>Providing debug info about registered services.</li>
-                        <li>Managing service provider registration and booting.</li>
-                    </ul>
-
-                    <div class="code-block"><pre>// bootstrap/app.php
-
-use BareMetalPHP\Application;
-
-require_once __DIR__ . '/../vendor/autoload.php';
-
-$app = new Application(__DIR__ . '/..');
-
-// Set instance for global access
-Application::setInstance($app);
-
-// Register service providers
-$providersFile = __DIR__ . '/providers.php';
-if (file_exists($providersFile)) {
-    $providers = require $providersFile;
-    $app->registerProviders($providers);
-}
-
-// Boot all registered providers
-$app->boot();
-
-return $app;</pre></div>
-
-                    <p>
-                        Service providers handle all service registration and configuration. See the <a class="inline-link" href="#providers">Service Providers</a> section for more details.
-                    </p>
-                </section>
-
-                <!-- SERVICE PROVIDERS -->
-                <section class="doc-section" id="providers">
-                    <h2>Service Providers</h2>
-                    <p>
-                        Service Providers are the central place to configure and bootstrap your application. They organize service registration into logical groups and provide a clean, modular way to set up your framework.
-                    </p>
-
-                    <h3>Creating a Service Provider</h3>
-                    <p>
-                        All service providers extend the <code>BareMetalPHP\Support\ServiceProvider</code> base class:
-                    </p>
-
-                    <div class="code-block"><pre>// app/Providers/AppServiceProvider.php
-
-namespace App\Providers;
-
-use BareMetalPHP\Support\ServiceProvider;
-
-class AppServiceProvider extends ServiceProvider
+class UserController
 {
-    public function register(): void
+    public function show(\App\Models\User $user)
     {
-        // Register bindings in the service container
-        $this->app->singleton(SomeService::class, function () {
-            return new SomeService();
-        });
+        return view('user.show', ['user' => $user]);
     }
 
-    public function boot(): void
+    public function store(Request $request)
     {
-        // Boot services after all providers are registered
+        $user = User::create($request->all());
+        
+        return redirect()->route('users.show', $user->id);
     }
-}</pre></div>
-
-                    <h3>Registering Service Providers</h3>
-                    <p>
-                        Service providers are registered in <code>bootstrap/providers.php</code>:
-                    </p>
-
-                    <div class="code-block"><pre>// bootstrap/providers.php
-
-return [
-    // Framework core providers
-    \BareMetalPHP\Providers\ConfigServiceProvider::class,
-    \BareMetalPHP\Providers\DatabaseServiceProvider::class,
-    \BareMetalPHP\Providers\ViewServiceProvider::class,
-    \BareMetalPHP\Providers\RoutingServiceProvider::class,
-    \BareMetalPHP\Providers\HttpServiceProvider::class,
-    \BareMetalPHP\Providers\LoggingServiceProvider::class,
-    
-    // Optional: Frontend integration (React/Vue with Vite)
-    // \BareMetalPHP\Providers\FrontendServiceProvider::class,
-    
-    // Application providers
-    \App\Providers\AppServiceProvider::class,
-];</pre></div>
-
-                    <h3>Built-in Service Providers</h3>
-                    <p>The framework includes several service providers:</p>
-                    <ul>
-                        <li><strong>ConfigServiceProvider</strong> – Loads configuration files from <code>config/</code></li>
-                        <li><strong>DatabaseServiceProvider</strong> – Registers database connections (SQLite, MySQL, PostgreSQL) and model setup</li>
-                        <li><strong>ViewServiceProvider</strong> – Configures view paths and caching</li>
-                        <li><strong>RoutingServiceProvider</strong> – Registers router and loads route files</li>
-                        <li><strong>HttpServiceProvider</strong> – Registers HTTP kernel</li>
-                        <li><strong>LoggingServiceProvider</strong> – Sets up logging system</li>
-                        <li><strong>FrontendServiceProvider</strong> – Optional provider for React/Vue integration with Vite</li>
-                    </ul>
-
-                    <div class="card">
-                        <span class="badge info">tip</span>
-                        <p style="margin-top:12px;">
-                            Service providers are registered in order, and all <code>register()</code> methods are called before any <code>boot()</code> methods. This ensures dependencies are available when booting.
-                        </p>
-                    </div>
-                </section>
-
-                <!-- HTTP -->
-                <section class="doc-section" id="http">
-                    <h2>HTTP Kernel &amp; Middleware</h2>
-                    <p>
-                        The HTTP layer consists of:
-                    </p>
-                    <ul>
-                        <li><code>BareMetalPHP\Http\Request</code> – an immutable request object.</li>
-                        <li><code>BareMetalPHP\Http\Response</code> – simple response wrapper.</li>
-                        <li><code>BareMetalPHP\Http\Kernel</code> – builds a middleware pipeline and delegates to the router.</li>
-                    </ul>
-
-                    <div class="code-block"><pre>// Kernel::handle()
-
-public function handle(Request $request): Response
-{
-    try {
-        $pipeline = array_reduce(
-            array_reverse($this->middleware),
-            function (callable $next, string $middlewareClass) {
-                return function (Request $request) use ($next, $middlewareClass): Response {
-                    $middleware = $this->app->make($middlewareClass);
-                    return $middleware->handle($request, $next);
-                };
-            },
-            fn (Request $request): Response => $this->router->dispatch($request)
-        );
-        return $pipeline($request);
-    } catch (\Throwable $e) {
-        // Handle exceptions with error pages or API responses
-    }
-}</pre></div>
-
-                    <p>
-                        Middleware are simple classes with a <code>handle(Request $request, Closure $next)</code> method.
-                    </p>
-
-                    <div class="code-block"><pre>// app/Http/Middleware/CustomMiddleware.php
-
-namespace App\Http\Middleware;
-
-use BareMetalPHP\Http\Request;
-use BareMetalPHP\Http\Response;
-use Closure;
-
-class CustomMiddleware
-{
-    public function handle(Request $request, Closure $next): Response
-    {
-        // Before the request is handled
-        $response = $next($request);
-
-        // After the request is handled
-        return $response;
-    }
-}</pre></div>
-
-                    <p>
-                        Middleware can be registered globally in <code>BareMetalPHP\Http\Kernel::$middleware</code> or applied to specific routes.
-                    </p>
-                </section>
-
-                <!-- ROUTING -->
-                <section class="doc-section" id="routing">
-                    <h2>Routing &amp; Controllers</h2>
-
-                    <h3>Basic Routes</h3>
-                    <div class="code-block"><pre>// routes/web.php
-
-return function (Router $router): void {
-    $router->get('/', function () {
-        return View::make('home');
-    });
-
-    $router->get('/hello/{name}', function (string $name) {
-        return new Response("Hello, {$name}");
-    });
-    
-    $router->post('/users', [UserController::class, 'store']);
-};</pre></div>
-
-                    <h3>Named Routes</h3>
-                    <p>Routes can be given names for easy URL generation:</p>
-
-                    <div class="code-block"><pre>$router->get('/users/{id}', [UserController::class, 'show'])->name('users.show');
-
-// Generate URL using the route helper
-$url = route('users.show', ['id' => 1]);
-// Returns: /users/1</pre></div>
-
-                    <h3>Controller Actions</h3>
-                    <p>Routes can point to controllers using array syntax:</p>
-
-                    <div class="code-block"><pre>$router->get('/dashboard', [HomeController::class, 'index']);
-
-// In HomeController
-namespace App\Http\Controllers;
-
-use BareMetalPHP\Http\Request;
-use BareMetalPHP\Http\Response;
-
-class HomeController
-{
-    public function index(Request $request): Response
-    {
-        // Request is injected automatically via reflection
-        return View::make('dashboard');
-    }
-}</pre></div>
-
-                    <h3>Route Parameters &amp; Implicit Model Binding</h3>
-                    <p>
-                        Named parameters in routes are converted into regexes and collected into <code>$routeParams</code>. These are used
-                        both as raw values and for <strong>implicit route model binding</strong>.
-                    </p>
-
-                    <div class="code-block"><pre>$router->get('/users/{user}', [UserController::class, 'show']);
-
-// In UserController
-
-public function show(\App\Models\User $user): Response
-{
-    // The {user} parameter is resolved into a User model:
-    // SELECT * FROM users WHERE id = :id LIMIT 1
-    return View::make('users.show', compact('user'));
-}</pre></div>
-
-                    <p>
-                        Under the hood, the router uses reflection to check if a parameter type is a subclass of
-                        <code>BareMetalPHP\Database\Model</code> and the parameter name matches a route parameter; if so, it calls
-                        <code>User::find($id)</code> and injects the model.
-                    </p>
-                </section>
-
-                <!-- VIEWS -->
-                <section class="doc-section" id="views">
-                    <h2>Views &amp; Templating</h2>
-                    <p>
-                        Views live in <code>resources/views</code> and are compiled to PHP into <code>storage/views</code> by
-                        <code>BareMetalPHP\View\TemplateEngine</code>. The <code>View</code> class compiles and returns a
-                        <code>Response</code>.
-                    </p>
-
-                    <h3>Template Syntax</h3>
-                    <ul>
-                        <li><code>{{ $var }}</code> – escaped echo (<code>htmlspecialchars</code>).</li>
-                        <li><code>{!! $html !!}</code> – raw echo (use with caution!).</li>
-                        <li><code>@if</code>, <code>@elseif</code>, <code>@else</code>, <code>@endif</code>.</li>
-                        <li><code>@foreach</code>, <code>@endforeach</code>.</li>
-                    </ul>
-
-                    <div class="code-block"><pre>&lt;!-- resources/views/home.php --&gt;
-
-&lt;!doctype html&gt;
-&lt;html&gt;
-&lt;head&gt;
-    &lt;meta charset="UTF-8"&gt;
-    &lt;title&gt;Bare Metal PHP • Home&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
-    &lt;h1&gt;Welcome, {{ $user->name }}&lt;/h1&gt;
-
-    @if ($user->posts->isEmpty())
-        &lt;p&gt;No posts yet.&lt;/p&gt;
-    @else
-        &lt;ul&gt;
-            @foreach ($user->posts as $post)
-                &lt;li&gt;{{ $post->title }}&lt;/li&gt;
-            @endforeach
-        &lt;/ul&gt;
-    @endif
-&lt;/body&gt;
-&lt;/html&gt;</pre></div>
-
-                    <p>
-                        The first time a view is requested, it is compiled and cached; subsequent requests use the cached file
-                        until the source template timestamp changes.
-                    </p>
-
-                    <h3>Using Views in Controllers</h3>
-                    <div class="code-block"><pre>use BareMetalPHP\View\View;
-
-public function index(): Response
-{
-    return View::make('home', [
-        'name' => 'World'
-    ]);
-}
-
-// Or using the helper function
-return view('home', ['name' => 'World']);</pre></div>
-                </section>
-
-                <!-- DATABASE CONFIGURATION -->
-                <section class="doc-section" id="database-config">
-                    <h2>Database Configuration</h2>
-                    <p>
-                        The framework supports multiple database drivers: SQLite, MySQL, and PostgreSQL. Database configuration is managed through <code>config/database.php</code> and environment variables.
-                    </p>
-
-                    <h3>Configuration File</h3>
-                    <p>
-                        The <code>config/database.php</code> file defines all available database connections:
-                    </p>
-
-                    <div class="code-block"><pre>return [
-    'default' => env('DB_CONNECTION', 'sqlite'),
-    'connections' => [
-        'sqlite' => [
-            'driver' => 'sqlite',
-            'database' => env('DB_DATABASE', database_path('database.sqlite')),
-        ],
-        'mysql' => [
-            'driver' => 'mysql',
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', 3306),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
-            'charset' => env('DB_CHARSET', 'utf8mb4'),
-        ],
-        'pgsql' => [
-            'driver' => 'pgsql',
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', 5432),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
-            'charset' => env('DB_CHARSET', 'utf8'),
-        ],
-    ],
-];</pre></div>
-
-                    <p>
-                        The framework automatically handles driver-specific SQL differences (identifier quoting, LIMIT/OFFSET syntax, boolean types, etc.) so your code works across all supported databases.
-                    </p>
-                </section>
-
-                <!-- MODELS -->
-                <section class="doc-section" id="models">
-                    <h2>Models &amp; ActiveRecord</h2>
-                    <p>
-                        Models extend <code>BareMetalPHP\Database\Model</code> and map to database tables. The base model provides:
-                    </p>
-                    <ul>
-                        <li>ActiveRecord operations: <code>save()</code>, <code>delete()</code>, <code>all()</code>, <code>find()</code>.</li>
-                        <li>Magic attributes via <code>__get</code>/<code>__set</code> and accessor/mutator methods.</li>
-                        <li>Timestamps (<code>created_at</code>, <code>updated_at</code>).</li>
-                        <li>Relationship helpers: <code>hasOne</code>, <code>hasMany</code>, <code>belongsTo</code>, <code>belongsToMany</code>.</li>
-                    </ul>
-
-                    <div class="code-block"><pre>// app/Models/User.php
-
-namespace App\Models;
-
-use BareMetalPHP\Database\Model;
-
-class User extends Model
-{
-    protected static string $table = 'users';
-
-    public function posts()
-    {
-        return $this->hasMany(Post::class, 'user_id');
-    }
-
-    // Accessor example:
-    public function getDisplayNameAttribute(): string
-    {
-        return $this->name . ' &lt;' . $this->email . '&gt;';
-    }
-
-    // Mutator example:
-    public function setEmailAttribute(string $value): void
-    {
-        $this->attributes['email'] = strtolower($value);
-    }
-}</pre></div>
-
-                    <h3>Creating &amp; Updating</h3>
-                    <div class="code-block"><pre>// create
-$user = new User([
-    'name'  => 'Elliot Anderson',
-    'email' => 'elliot@example.com',
-]);
-
-$user->save();        // INSERT, sets $user->id
-
-// update
-$user->name = 'New Name';
-$user->save();        // UPDATE users SET ... WHERE id = :id</pre></div>
-
-                    <p>Attributes are available directly as properties thanks to magic attribute handling and relationship resolution:</p>
-
-                    <div class="code-block"><pre>$user = User::find(1);
-
-echo $user->display_name;   // calls getDisplayNameAttribute()
-echo $user->posts->count(); // posts() relationship, wrapped in a Collection</pre></div>
-                </section>
-
-                <!-- BUILDER & COLLECTION -->
-                <section class="doc-section" id="builder">
-                    <h2>Query Builder &amp; Collection</h2>
-                    <p>
-                        The <code>BareMetalPHP\Database\Builder</code> class provides a fluent query builder for SELECT
-                        queries. Results are wrapped in <code>BareMetalPHP\Support\Collection</code>, an iterable helper with
-                        <code>map</code>, <code>filter</code>, <code>first</code>, <code>pluck</code>, and more.
-                    </p>
-
-                    <div class="code-block"><pre>// Fluent builder usage
-
-$users = User::query()
-    ->where('age', '>', 18)
-    ->where('status', 'active')
-    ->orderBy('name')
-    ->limit(10)
-    ->get();           // returns Collection&lt;User&gt;
-
-$names = $users
-    ->map(fn (User $u) => $u->name)
-    ->all();</pre></div>
-
-                    <p>
-                        Models provide shortcuts that delegate to the builder:
-                    </p>
-
-                    <div class="code-block"><pre>User::all();                        // Collection&lt;User&gt;
-User::find(1);                      // ?User
-User::where('status', 'active')->get();    // Collection&lt;User&gt;</pre></div>
-
-                    <div class="card">
-                        <span class="badge info">note</span>
-                        <p style="margin-top:12px;">
-                            The builder automatically adapts SQL syntax for SQLite, MySQL, and PostgreSQL. It handles identifier quoting, LIMIT/OFFSET syntax, and data type differences automatically.
-                        </p>
-                    </div>
-                </section>
-
-                <!-- MIGRATIONS & CLI -->
-                <section class="doc-section" id="migrations">
-                    <h2>Migrations &amp; Console Commands</h2>
-                    <p>
-                        Bare Metal PHP ships with a CLI tool (<code>php mini</code>) that provides various commands.
-                    </p>
-
-                    <div class="code-block"><pre>$ php mini
-Available commands:
-  serve
-  make:controller
-  make:migration
-  migrate
-  migrate:rollback
-  frontend:install</pre></div>
-
-                    <h3>Creating &amp; Running Migrations</h3>
-
-                    <div class="code-block"><pre>// generate a migration class under database/migrations
-$ php mini make:migration create_users_table</pre></div>
-
-                    <p>
-                        The generated file returns an anonymous class extending <code>BareMetalPHP\Database\Migration</code> with
-                        <code>up()</code> and <code>down()</code> methods:
-                    </p>
-
-                    <div class="code-block"><pre>// database/migrations/20241204120000_create_users_table.php
-
-use BareMetalPHP\Database\Migration;
-use BareMetalPHP\Database\Connection;
-
-return new class extends Migration {
-    public function up(Connection $connection): void
-    {
-        $connection->pdo()->exec(&lt;&lt;&lt;SQL
-CREATE TABLE users (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    name        TEXT NOT NULL,
-    email       TEXT NOT NULL,
-    password    TEXT NOT NULL,
-    created_at  TEXT,
-    updated_at  TEXT
-);
-SQL);
-    }
-
-    public function down(Connection $connection): void
-    {
-        $connection->pdo()->exec('DROP TABLE IF EXISTS users;');
-    }
-};</pre></div>
-
-                    <div class="code-block"><pre>// run outstanding migrations
-$ php mini migrate
-
-// rollback most recent batch
-$ php mini migrate:rollback</pre></div>
-                </section>
-
-                <!-- AUTH -->
-                <section class="doc-section" id="auth">
-                    <h2>Authentication</h2>
-                    <p>
-                        Bare Metal PHP includes a simple authentication system using sessions. The <code>BareMetalPHP\Auth\Auth</code> class provides methods for user authentication.
-                    </p>
-
-                    <h3>Authenticating Users</h3>
-                    <div class="code-block"><pre>use BareMetalPHP\Auth\Auth;
-
-// Attempt to authenticate with email and password
-$user = Auth::attempt($email, $password);
-
-if ($user) {
-    // User is now logged in
-    return redirect('/dashboard');
-} else {
-    // Authentication failed
-    return redirect('/login')->with('error', 'Invalid credentials');
-}
-
-// Manually log in a user
-Auth::login($user);
-
-// Log out
-Auth::logout();
-
-// Check if user is authenticated
-if (Auth::check()) {
-    $user = Auth::user();
-}
-
-// Get authenticated user
-$user = Auth::user();
-
-// Get authenticated user ID
-$userId = Auth::id();</pre></div>
-
-                    <h3>Using in Controllers</h3>
-                    <div class="code-block"><pre>// app/Http/Controllers/LoginController.php
-
-public function login(Request $request): Response
-{
-    $user = Auth::attempt(
-        $request->input('email'),
-        $request->input('password')
-    );
-
-    if (!$user) {
-        return redirect('/login');
-    }
-
-    return redirect('/dashboard');
-}
-
-// Using the helper function
-use function auth;
-
-$user = auth(); // Returns the authenticated user or null</pre></div>
-                </section>
-
-                <!-- SESSIONS -->
-                <section class="doc-section" id="sessions">
-                    <h2>Sessions</h2>
-                    <p>
-                        Sessions are managed through the <code>BareMetalPHP\Support\Session</code> class. Sessions must be started in your <code>public/index.php</code> file.
-                    </p>
-
-                    <h3>Session Usage</h3>
-                    <div class="code-block"><pre>use BareMetalPHP\Support\Session;
-
-// Start session (in public/index.php)
-Session::start();
-
-// Set a session value
-Session::set('key', 'value');
-
-// Get a session value
-$value = Session::get('key');
-
-// Check if session has a key
-if (Session::has('key')) {
-    // ...
-}
-
-// Remove a session value
-Session::remove('key');
-
-// Get all session data
-$all = Session::all();
-
-// Regenerate session ID
-Session::regenerate();</pre></div>
-
-                    <h3>Helper Function</h3>
-                    <div class="code-block"><pre>// Using the session helper
-session('key', 'value');        // Set
-$value = session('key');        // Get
-$all = session();               // Get all</pre></div>
-                </section>
-
-                <!-- LOGGING -->
-                <section class="doc-section" id="logging">
-                    <h2>Logging</h2>
-                    <p>
-                        Bare Metal PHP includes a logging system that writes to files in <code>storage/logs</code>. The logging service provider automatically configures the log path.
-                    </p>
-
-                    <h3>Logging Messages</h3>
-                    <div class="code-block"><pre>use BareMetalPHP\Support\Log;
-
-// Different log levels
-Log::emergency('System is unusable');
-Log::alert('Action must be taken immediately');
-Log::critical('Critical conditions');
-Log::error('Error occurred');
-Log::warning('Warning message');
-Log::notice('Normal but significant condition');
-Log::info('Informational message');
-Log::debug('Debug-level message');
-
-// With context
-Log::error('User login failed', [
-    'user_id' => 123,
-    'ip' => $request->getIp()
-]);</pre></div>
-
-                    <h3>Helper Functions</h3>
-                    <div class="code-block"><pre>// Using helper functions
-log_info('Something happened');
-log_error('An error occurred');
-log_warning('Be careful');</pre></div>
-                </section>
-
-                <!-- FRONTEND -->
-                <section class="doc-section" id="frontend">
-                    <h2>Frontend Integration</h2>
-                    <p>
-                        Bare Metal PHP includes optional support for modern frontend frameworks (React and Vue) with Vite for hot module replacement and asset bundling.
-                    </p>
-
-                    <h3>Installation</h3>
-                    <p>
-                        Install frontend integration using the CLI command:
-                    </p>
-
-                    <div class="code-block"><pre># Install React
-php mini frontend:install react
-
-# Install Vue
-php mini frontend:install vue</pre></div>
-
-                    <p>
-                        This will create the necessary files and configuration. Then:
-                    </p>
-
-                    <div class="code-block"><pre># Install Node.js dependencies
-npm install
-
-# Start Vite dev server (in a separate terminal)
-npm run dev
-
-# Start PHP server
-php mini serve</pre></div>
-
-                    <h3>Using in Controllers</h3>
-                    <div class="code-block"><pre>use function spa;
-
-// Render an SPA component
-return spa('Dashboard', [
-    'user' => Auth::user()
-]);</pre></div>
-
-                    <h3>Asset Management</h3>
-                    <div class="code-block"><pre>use function vite;
-
-// In your views
+}</code></pre>
+
+            <h3>Create a Controller</h3>
+            <pre><code class="language-bash">php mini make:controller UserController</code></pre>
+        </section>
+
+        <!-- DI -->
+        <section id="di">
+            <h2>🧩 Dependency Injection</h2>
+            <p>BareMetalPHP includes a powerful DI container for managing dependencies:</p>
+
+            <pre><code class="language-php">// Bind an interface to a concrete implementation
+$app->bind(LoggerInterface::class, FileLogger::class);
+
+// Bind a singleton
+$app->singleton(Database::class, function ($app) {
+    return new Database($app['config']['database']);
+});
+
+// Resolve from container
+$logger = $app->make(LoggerInterface::class);</code></pre>
+
+            <p>
+                Controllers automatically resolve dependencies from the container, 
+                making testing and maintainability simple.
+            </p>
+        </section>
+
+        <!-- VIEWS -->
+        <section id="views">
+            <h2>🎨 Views & Templates</h2>
+            <p>Render views with a simple, intuitive API:</p>
+
+            <pre><code class="language-php">// Return a view
+return view('welcome', ['name' => 'Elliot']);
+
+// View with data
+return view('posts.index', [
+    'posts' => Post::all(),
+    'title' => 'All Posts'
+]);</code></pre>
+
+            <h3>Template Example</h3>
+            <pre><code class="language-html">&lt;!-- resources/views/welcome.php --&gt;
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
-    &lt;?php echo vite()->viteClient(); ?&gt;
-    &lt;?php echo vite()->styles('resources/js/main.jsx'); ?&gt;
+    &lt;title&gt;Welcome&lt;/title&gt;
 &lt;/head&gt;
 &lt;body&gt;
-    &lt;div id="app"&gt;&lt;/div&gt;
-    &lt;?php echo vite()->script('resources/js/main.jsx'); ?&gt;
+    &lt;h1&gt;Hello, &lt;?= htmlspecialchars($name) ?&gt;!&lt;/h1&gt;
 &lt;/body&gt;
-&lt;/html&gt;</pre></div>
+&lt;/html&gt;</code></pre>
+        </section>
 
-                    <p>
-                        Make sure to register <code>FrontendServiceProvider</code> in <code>bootstrap/providers.php</code> to use frontend features.
-                    </p>
-                </section>
+        <!-- MIGRATIONS -->
+        <section id="migrations">
+            <h2>🗄 Database & Migrations</h2>
+            <p>Manage your database schema with version-controlled migrations:</p>
 
-                <!-- HELPERS -->
-                <section class="doc-section" id="helpers">
-                    <h2>Helper Functions</h2>
-                    <p>
-                        Bare Metal PHP includes several global helper functions for common tasks:
-                    </p>
+            <h3>Create a Migration</h3>
+            <pre><code class="language-bash">php mini make:migration create_users_table</code></pre>
 
-                    <h3>HTTP &amp; Responses</h3>
-                    <div class="code-block"><pre>// Create responses
-response('Hello', 200, ['Content-Type' => 'text/plain']);
-json_response(['key' => 'value'], 200);
+            <h3>Run Migrations</h3>
+            <pre><code class="language-bash">php mini migrate</code></pre>
 
-// Redirects
-redirect('/dashboard');
-redirect('/login', 301);
+            <h3>Rollback Migrations</h3>
+            <pre><code class="language-bash">php mini migrate:rollback</code></pre>
 
-// Abort request
-abort(404);
-abort(403, 'Access denied');</pre></div>
+            <h3>Migration Example</h3>
+            <pre><code class="language-php">use Database\Migration;
 
-                    <h3>URLs &amp; Routes</h3>
-                    <div class="code-block"><pre>// Generate URLs
-url('/path');              // Full URL
-asset('css/style.css');    // Asset URL
+return new class extends Migration
+{
+    public function up()
+    {
+        $this->schema->create('users', function ($table) {
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->timestamps();
+        });
+    }
 
-// Generate route URLs
-route('users.show', ['id' => 1]);</pre></div>
+    public function down()
+    {
+        $this->schema->drop('users');
+    }
+};</code></pre>
+        </section>
 
-                    <h3>Views</h3>
-                    <div class="code-block"><pre>// Create view responses
-view('home', ['name' => 'World']);</pre></div>
+        <!-- TESTING -->
+        <section id="testing">
+            <h2>🧪 Testing</h2>
+            <p>BareMetalPHP includes PHPUnit for testing out of the box:</p>
 
-                    <h3>Configuration &amp; Environment</h3>
-                    <div class="code-block"><pre>// Get config values
-config('database.default');
-config('app.name', 'Default');
+            <pre><code class="language-bash">vendor/bin/phpunit</code></pre>
 
-// Get environment variables
-env('APP_DEBUG', false);
-env('DB_HOST', 'localhost');</pre></div>
+            <h3>Test Example</h3>
+            <pre><code class="language-php">namespace Tests\Feature;
 
-                    <h3>Utilities</h3>
-                    <div class="code-block"><pre>// Dump and die (debugging)
-dd($variable);
-dump($variable);
-
-// Path helpers
-base_path('app/Models');
-database_path('migrations');</pre></div>
-                </section>
-
-                <!-- ERRORS -->
-                <section class="doc-section" id="errors">
-                    <h2>Error Pages &amp; Debug Experience</h2>
-                    <p>
-                        In debug mode (<code>APP_DEBUG=true</code>), unhandled exceptions are rendered using
-                        <code>BareMetalPHP\Exceptions\ErrorPageRenderer</code> – a dark error page that shows:
-                    </p>
-                    <ul>
-                        <li>Exception class, message, file and line.</li>
-                        <li>Code excerpt with the failing line highlighted.</li>
-                        <li>Stack trace with "App" vs "Framework" frames.</li>
-                        <li>Request context: method, URI, client IP and superglobals (GET, POST, cookies, headers).</li>
-                        <li>Container bindings: registered bindings, singletons and instances.</li>
-                        <li>A saved HTML snapshot link under <code>public/debug/&lt;id&gt;.html</code>.</li>
-                    </ul>
-
-                    <p>
-                        API requests (routes starting with <code>/api/</code>) automatically receive JSON error responses:
-                    </p>
-
-                    <div class="code-block"><pre>{
-    "error": "Internal Server Error",
-    "message": "Error message here",
-    "file": "path/to/file.php",
-    "line": 42,
-    "trace": [...]
-}</pre></div>
-
-                    <div class="card">
-                        <span class="badge warn">production</span>
-                        <p style="margin-top:12px;">
-                            In production, set <code>APP_DEBUG=false</code>. The kernel will return a generic
-                            <code>500 Internal Server Error</code> response without exposing stack traces or request data.
-                        </p>
-                    </div>
-                </section>
-
-                <!-- TESTING -->
-                <section class="doc-section" id="testing">
-                    <h2>Testing</h2>
-                    <p>
-                        Bare Metal PHP includes a comprehensive PHPUnit test suite. Tests are located in the <code>tests/</code> directory of the framework library.
-                    </p>
-
-                    <h3>Running Tests</h3>
-                    <div class="code-block"><pre># Run all tests
-composer test
-
-# Or directly
-vendor/bin/phpunit
-
-# Run specific test suite
-vendor/bin/phpunit tests/Unit
-vendor/bin/phpunit tests/Feature
-
-# Run with coverage
-vendor/bin/phpunit --coverage-html coverage/</pre></div>
-
-                    <h3>Writing Tests</h3>
-                    <p>
-                        Create test files in your application's <code>tests/</code> directory:
-                    </p>
-
-                    <div class="code-block"><pre>namespace Tests;
-
-use PHPUnit\Framework\TestCase;
-use BareMetalPHP\Application;
+use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
-    protected Application $app;
-
-    protected function setUp(): void
+    public function test_homepage()
     {
-        $this->app = require __DIR__ . '/../bootstrap/app.php';
+        $response = $this->get('/');
+        
+        $response->assertStatus(200);
+        $response->assertSee('Welcome');
+    }
+}</code></pre>
+        </section>
+
+        <!-- CLI -->
+        <section id="cli">
+            <h2>🔧 CLI Commands</h2>
+            <p>The <span class="inline-code">mini</span> CLI provides useful commands for development:</p>
+
+            <pre><code class="language-bash"># Start development server
+php mini serve
+
+# Go server commands
+php mini go:install
+php mini go:serve
+
+# Generate code
+php mini make:controller UserController
+php mini make:migration create_posts_table
+
+# Database
+php mini migrate
+php mini migrate:rollback
+
+# Run tests
+php mini test</code></pre>
+        </section>
+
+        <!-- ARCHITECTURE -->
+        <section id="architecture">
+            <h2>🏗 Project Structure</h2>
+            <p>BareMetalPHP follows a clean, intuitive directory structure:</p>
+
+            <pre><code class="language-plaintext">myapp/
+├── app/                    # Application code
+│   ├── Controllers/        # HTTP controllers
+│   ├── Models/            # Data models
+│   └── Middleware/        # HTTP middleware
+├── config/                # Configuration files
+│   ├── app.php
+│   ├── database.php
+│   └── appserver.php      # Go server config
+├── database/              # Database files
+│   └── migrations/        # Database migrations
+├── public/                # Web root
+│   ├── index.php         # Entry point
+│   ├── css/
+│   ├── js/
+│   └── images/
+├── routes/                # Route definitions
+│   └── web.php
+├── server/                # Go runtime source
+│   └── main.go
+├── php/                   # PHP worker files
+│   ├── bootstrap_app.php
+│   └── bridge.php
+├── resources/             # Views and assets
+│   └── views/
+├── tests/                 # Test suite
+└── vendor/                # Composer dependencies</code></pre>
+        </section>
+
+    </main>
+</div>
+
+<script>
+    hljs.highlightAll();
+
+    // Smooth scroll highlight
+    const sections = document.querySelectorAll("main section");
+    const navLinks = document.querySelectorAll(".nav-link");
+
+    function highlightNav() {
+        let current = "";
+        
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+            
+            if (window.scrollY >= sectionTop - 200) {
+                current = section.getAttribute("id");
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove("active");
+            if (link.getAttribute("href") === `#${current}`) {
+                link.classList.add("active");
+            }
+        });
     }
 
-    public function testExample(): void
-    {
-        $this->assertTrue(true);
-    }
-}</pre></div>
-                </section>
-            </main>
-        </div>
-    </div>
+    window.addEventListener("scroll", highlightNav);
+    highlightNav();
+</script>
 
-    <script>
-        // Mobile menu toggle
-        (function() {
-            const menuToggle = document.getElementById('menuToggle');
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-
-            function toggleMenu() {
-                sidebar.classList.toggle('open');
-                overlay.classList.toggle('show');
-                document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
-            }
-
-            function closeMenu() {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('show');
-                document.body.style.overflow = '';
-            }
-
-            menuToggle?.addEventListener('click', toggleMenu);
-            overlay?.addEventListener('click', closeMenu);
-
-            // Close menu when clicking a nav link on mobile
-            const navLinks = document.querySelectorAll('.nav-link');
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    if (window.innerWidth <= 1024) {
-                        closeMenu();
-                    }
-                });
-            });
-        })();
-
-        // Navigation: smooth-scroll + scrollspy
-        (function() {
-            const links = Array.from(document.querySelectorAll('.nav-link'));
-            const sections = new Map();
-
-            links.forEach(link => {
-                const id = link.getAttribute('data-target');
-                const section = document.getElementById(id);
-                if (section) {
-                    sections.set(id, section);
-                }
-
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const targetId = link.getAttribute('data-target');
-                    const targetSection = sections.get(targetId);
-                    if (!targetSection) return;
-
-                    // Update active state
-                    links.forEach(l => l.classList.remove('active'));
-                    link.classList.add('active');
-
-                    // Smooth scroll
-                    const offset = 80;
-                    window.scrollTo({
-                        top: Math.max(0, targetSection.offsetTop - offset),
-                        behavior: 'smooth'
-                    });
-                });
-            });
-
-            // IntersectionObserver for scrollspy
-            const observerOptions = {
-                root: null,
-                rootMargin: '-20% 0px -60% 0px',
-                threshold: 0
-            };
-
-            const observer = new IntersectionObserver((entries) => {
-                const visible = entries
-                    .filter(e => e.isIntersecting)
-                    .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-                
-                const activeId = visible[0]?.target?.id;
-
-                if (activeId) {
-                    links.forEach(l => {
-                        l.classList.toggle('active', l.getAttribute('data-target') === activeId);
-                    });
-                }
-            }, observerOptions);
-
-            sections.forEach((section) => observer.observe(section));
-        })();
-    </script>
-
-    <!-- Highlight.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script>
-        (function() {
-            const blocks = document.querySelectorAll('.code-block > pre');
-
-            blocks.forEach(pre => {
-                if (pre.querySelector('code')) return;
-
-                const code = document.createElement('code');
-                code.innerHTML = pre.innerHTML;
-                pre.innerHTML = '';
-                pre.appendChild(code);
-            });
-
-            if (window.hljs) {
-                document.querySelectorAll('.code-block pre code').forEach((el) => {
-                    try { 
-                        hljs.highlightElement(el);
-                    } catch (e) { /* ignore */ }
-                });
-            }
-        })();
-    </script>
 </body>
 </html>
